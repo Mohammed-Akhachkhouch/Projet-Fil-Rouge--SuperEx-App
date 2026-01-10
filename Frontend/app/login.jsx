@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, Alert } from 'react-native';
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 
 export default function Login() {
+ 
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +34,8 @@ export default function Login() {
         onPress={() => console.log('Login')}
       >
         <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.link}>No account?</Text>
+
       </TouchableOpacity>
       
       <TouchableOpacity onPress={() => router.push('/Signup')}>

@@ -20,7 +20,7 @@ export default function WelcomeScreen() {
       />
 
       <View style={styles.content}>
-        <Text style={styles.title}>SuperMarket express</Text>
+        <Text style={styles.title}>SuperMarket</Text>
         <Text style={styles.subtitle}>Express</Text>
         <Text style={styles.description}>
           Order groceries and get them delivered to your door in minutes! Fast, convenient, and reliable service for all your shopping needs.
@@ -35,8 +35,9 @@ export default function WelcomeScreen() {
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
 
+        <Text> Don't Have Account?</Text>
         <TouchableOpacity onPress={() => router.push('/Signup')}>
-          <Text style={styles.link}>Don't Have Account? Sign Up</Text>
+          <Text style={styles.link}> Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
