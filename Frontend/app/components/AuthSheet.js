@@ -1,64 +1,67 @@
-// components/AuthBottomSheet.js
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useMemo } from 'react';
 import { useRouter } from 'expo-router';
+import { useAuthSheet } from '../context/AuthSheetContext';
 
-export default function AuthBottomSheet({ visible, onClose }) {
+export default function AuthBottomSheet() {
+  const snapPoints = useMemo(() => ['40%'], []);
   const router = useRouter();
+  const { bottomSheetRef, closeAuthSheet } = useAuthSheet();
 
   return (
-    <Modal transparent visible={visible} animationType="slide">
-      <View style={styles.overlay}>
-        <View style={styles.sheet}>
-          <Text style={styles.title}>Welcome</Text>
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={-1}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+    >
+      <BottomSheetView style={styles.content}>
+        <Text style={styles.title}>Welcome</Text>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              onClose();
-              router.push('/login');
-            }}
-          >
-            <Text>Login</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            closeAuthSheet();
+            router.push('/login');
+          }}
+        >
+          <Text style={styles.text}>Login</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              onClose();
-              router.push('/signup');
-            }}
-          >
-            <Text>Sign Up</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.close}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            closeAuthSheet();
+            router.push('/signup');
+          }}
+        >
+          <Text style={styles.text}>Sign Up</Text>
+        </TouchableOpacity>
+      </BottomSheetView>
+    </BottomSheet>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  content: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-  sheet: {
-    backgroundColor: '#fff',
     padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
-  title: { fontSize: 18, fontWeight: 'bold' },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
   button: {
     padding: 15,
     backgroundColor: '#eee',
-    borderRadius: 10,
+    borderRadius: 12,
     marginTop: 10,
     alignItems: 'center',
   },
-  close: { color: 'red', marginTop: 15, textAlign: 'center' },
+  text: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
 });
