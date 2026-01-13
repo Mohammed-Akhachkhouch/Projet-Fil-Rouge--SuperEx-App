@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
     if (isLogin) {
       console.log('Login:', email, password);
       bottomSheetRef.current?.close();
-      router.push('/login');
+      router.push('/Homescreen');
     } else {
       console.log('Signup:', name, email, password);
       bottomSheetRef.current?.close();
