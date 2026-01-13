@@ -1,0 +1,28 @@
+import express from "express";
+import dotenv from "dotenv";
+import { sequelize } from "./config/database.js";
+
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/user.js";
+import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+
+dotenv.config();
+const app = express();
+app.use(express.json());
+
+// routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+
+// sync models with DB
+sequelize.sync({ alter: true })
+    .then(() => console.log("Database & tables created!"))
+    .catch(err => console.log("DB sync error:", err));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+export default app;
