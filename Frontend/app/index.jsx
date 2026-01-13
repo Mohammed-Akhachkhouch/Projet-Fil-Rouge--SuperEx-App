@@ -22,16 +22,19 @@ export default function WelcomeScreen() {
   };
 
   const handleSubmit = () => {
-    if (isLogin) {
-      console.log('Login:', email, password);
-      bottomSheetRef.current?.close();
-      router.push('/login');
-    } else {
-      console.log('Signup:', name, email, password);
-      bottomSheetRef.current?.close();
-      router.push('/Signup');
-    }
-  };
+  if (isLogin) {
+    console.log('Login:', email, password);
+    bottomSheetRef.current?.close();
+
+    router.replace('/(tabs)');
+  } else {
+    console.log('Signup:', name, email, password);
+    bottomSheetRef.current?.close();
+
+    router.replace('/(tabs)');
+  }
+};
+
 
   return (
     <View style={styles.container}>

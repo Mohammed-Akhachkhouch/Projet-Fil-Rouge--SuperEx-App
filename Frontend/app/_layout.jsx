@@ -6,10 +6,10 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
-        <Stack screenOptions={{ headerShown: true }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="login" />
-          <Stack.Screen name="Signup" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />     {/* Welcome */}
+          <Stack.Screen name="(tabs)" />    {/* Tabs */}
+          <Stack.Screen name="cart" />      {/* Cart خارج tabs */}
         </Stack>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
