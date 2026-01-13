@@ -3,7 +3,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';      
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
+import SearchBar from './component/SearchBar';
 export default function Homescreen() {
+    const [search, setSearch] = useState('');
     const router = useRouter(); 
     return (
 
@@ -11,6 +14,14 @@ export default function Homescreen() {
         <StatusBar style="light" />
 
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+      <SearchBar
+        value={search}
+        onChange={setSearch}
+      />
+
+    </View>
+
             <ImageBackground
             source={{ uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800' }}
             style={styles.headerImage}
@@ -89,5 +100,10 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
     },
+     container: {
+    padding: 20,
+    backgroundColor: '#fff',
+    flex: 1,
+  }
 }); 
     
