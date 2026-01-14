@@ -4,11 +4,14 @@ import { useState } from 'react';
 
 import SearchBar from './component/SearchBar';
 import CategoryCard from './component/CategoryCard';
+import ProductCard from './component/ProductCard';
 
 import meat from '../assets/images/meat.png';
 import dairy from '../assets/images/dairy.png';
 import bakery from '../assets/images/bakery.png';
 import fruitsvegetables from '../assets/images/Vegetables.png';
+import bananas from '../assets/images/dairy.png';
+import milk from '../assets/images/meat.png'
 
 export default function Homescreen() {
   const [search, setSearch] = useState('');
@@ -28,6 +31,18 @@ export default function Homescreen() {
   { id: '7', title: 'Drinks', image: dairy },
   { id: '8', title: 'Frozen', image: fruitsvegetables },
 ];
+const POPULAR = [
+  { id: 'p1', name: 'Organic Bananas', qty: '1 bunch (approx 6)', price: '1.29', image: bananas },
+  { id: 'p2', name: 'Whole Milk', qty: '1 Gallon', price: '3.49', image: milk },
+];
+
+const FRESH_ARRIVALS = [
+  { id: 'f1', name: 'Strawberries', qty: '500g', price: '2.99', image: fruitsvegetables, tag: 'New' },
+  { id: 'f2', name: 'Yogurt', qty: '6 cups', price: '4.20', image: dairy, tag: 'Fresh' },
+  { id: 'f3', name: 'Baguette', qty: '1 pc', price: '0.89', image: bakery, tag: 'New' },
+];
+
+
 
    const displayedCategories = showAll
   ? CATEGORIES
@@ -52,6 +67,9 @@ export default function Homescreen() {
 </View>
 
 
+
+
+
         <FlatList
   data={displayedCategories}
   keyExtractor={(item) => item.id}
@@ -65,6 +83,46 @@ export default function Homescreen() {
     />
   )}
 />
+<View style={{ marginTop: 20 }}>
+  <View style={styles.sectionHeader}>
+    <Text style={styles.sectionTitle}>Popular Near You</Text>
+  </View>
+
+  <FlatList
+    data={POPULAR}
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    keyExtractor={(item) => item.id}
+    renderItem={({ item }) => (
+      <ProductCard
+        item={item}
+        onAdd={() => console.log('Add:', item.name)}
+        onFav={() => console.log('Fav:', item.name)}
+      />
+    )}
+  />
+</View>
+<View style={{ marginTop: 20 }}>
+  <View style={styles.sectionHeader}>
+    <Text style={styles.sectionTitle}>Fresh Arrivals</Text>
+    <Text style={styles.seeAll}>See all</Text>
+  </View>
+
+  <FlatList
+    data={FRESH_ARRIVALS}
+    horizontal
+    showsHorizontalScrollIndicator={false}
+    keyExtractor={(item) => item.id}
+    renderItem={({ item }) => (
+      <ProductCard
+        item={item}
+        onAdd={() => console.log('Add fresh:', item.name)}
+        onFav={() => console.log('Fav fresh:', item.name)}
+      />
+    )}
+  />
+</View>
+
 
       </ScrollView>
     </View>
