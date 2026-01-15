@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { StatusBar } from 'expo-status-bar';
 import { useState, useRef, useMemo } from 'react';
+import { useRouter } from 'expo-router';
 
 import SearchBar from './component/SearchBar';
 import CategoryCard from './component/CategoryCard';
@@ -21,6 +22,10 @@ export default function Homescreen() {
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ['85%'], []);
   const [catSearch, setCatSearch] = useState('');
+
+  const router = useRouter();
+
+
 
 
   const openCategoriesSheet = () => {
@@ -98,7 +103,8 @@ export default function Homescreen() {
               <CategoryCard
                 title={item.title}
                 image={item.image}
-                onPress={() => console.log(item.title)}
+                onPress={() => router.push(`/category/${encodeURIComponent(item.title)}`)}
+
               />
             </View>
           )}
@@ -177,9 +183,10 @@ export default function Homescreen() {
                   title={item.title}
                   image={item.image}
                   onPress={() => {
-                    console.log('Category selected:', item.title);
-                    closeCategoriesSheet();
-                  }}
+  closeCategoriesSheet();
+  router.push(`/category/${encodeURIComponent(item.title)}`);
+}}
+
                 />
               </View>
             )}
@@ -201,7 +208,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: '#111' },
-  seeAll: { color: '#34A853', fontWeight: '600' },
   seeAll: { color: '#34A853', fontWeight: '600' },
 
   sheetContent: {

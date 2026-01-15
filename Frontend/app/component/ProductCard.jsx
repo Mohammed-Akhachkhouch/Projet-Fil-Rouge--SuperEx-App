@@ -1,13 +1,19 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity,Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function ProductCard({ item, onAdd, onFav }) {
+  const router = useRouter();
+
+  const goDetailes = () => {
+    router.push(`/product/${item.id}`);
+  }
   return (
-    <View style={styles.card}>
+    <Pressable style={styles.card} onPress={goDetailes}>
       <View style={styles.imageWrap}>
         <Image source={item.image} style={styles.image} />
 
-        <TouchableOpacity style={styles.favBtn} onPress={() => onFav?.(item)}>
+        <TouchableOpacity style={styles.favBtn} onPress={() => router.push(`/product/${item.id}`)}>
           <Ionicons name="heart-outline" size={18} color="#7B8794" />
         </TouchableOpacity>
       </View>
@@ -28,7 +34,7 @@ export default function ProductCard({ item, onAdd, onFav }) {
           <Ionicons name="add" size={18} color="#0d1b12" />
         </TouchableOpacity>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -66,6 +72,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  tag: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: 'rgba(19,236,91,0.95)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  tagText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0d1b12',
+  },
   name: {
     marginTop: 10,
     fontSize: 15,
@@ -96,19 +116,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  tag: {
-  position: 'absolute',
-  top: 10,
-  left: 10,
-  backgroundColor: 'rgba(19,236,91,0.95)',
-  paddingHorizontal: 10,
-  paddingVertical: 4,
-  borderRadius: 999,
-},
-tagText: {
-  fontSize: 12,
-  fontWeight: '700',
-  color: '#0d1b12',
-},
 
 });
