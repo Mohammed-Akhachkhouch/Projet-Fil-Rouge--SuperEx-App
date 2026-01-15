@@ -1,12 +1,14 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../store/cartStore';
+import { useRouter } from 'expo-router';
 
 export default function Cart() {
   const items = useCartStore((s) => s.items);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
   const setQuantity = useCartStore((s) => s.setQuantity);
   const totalPrice = useCartStore((s) => s.totalPrice);
+  const router = useRouter();
 
   const total = totalPrice();
 
@@ -70,9 +72,14 @@ export default function Cart() {
           <Text style={styles.totalPrice}>${total.toFixed(2)}</Text>
         </View>
 
-        <TouchableOpacity style={styles.checkoutBtn} activeOpacity={0.9}>
-          <Text style={styles.checkoutText}>Checkout</Text>
-        </TouchableOpacity>
+        <TouchableOpacity
+  style={styles.checkoutBtn}
+  activeOpacity={0.9}
+  onPress={() => router.push('/checkout')}
+>
+  <Text style={styles.checkoutText}>Checkout</Text>
+</TouchableOpacity>
+
       </View>
     </View>
   );
