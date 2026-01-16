@@ -4,7 +4,6 @@ export default function CategoryCard({ title, image, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
       <ImageBackground source={image} style={styles.image} imageStyle={styles.imageRadius}>
-        {/* Overlay خفيفة باش النص يبان */}
         <View style={styles.overlay} />
         <Text style={styles.title}>{title}</Text>
       </ImageBackground>
