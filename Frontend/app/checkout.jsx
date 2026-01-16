@@ -69,10 +69,20 @@ export default function Checkout() {
   }, [location]);
 
   const handlePlaceOrder = () => {
-    console.log('PLACE ORDER', { address, itemsCount: items.length, total });
-    clearCart();
-    router.replace('/(tabs)');
-  };
+  const fakeOrderId = `SX-${Math.floor(Math.random() * 900000 + 100000)}`;
+
+  clearCart();
+
+  router.replace({
+    pathname: '/confirmation',
+    params: {
+      orderId: fakeOrderId,
+      total: String(total),
+      address,
+    },
+  });
+};
+
 
   if (items.length === 0) {
     return (
@@ -87,7 +97,6 @@ export default function Checkout() {
 
   return (
     <View style={styles.screen}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.back}>← Back</Text>
@@ -95,7 +104,6 @@ export default function Checkout() {
         <Text style={styles.title}>Checkout</Text>
       </View>
 
-      {/* Map */}
       <View style={styles.mapBox}>
         {loadingLoc ? (
           <View style={styles.mapLoading}>
@@ -118,7 +126,6 @@ export default function Checkout() {
         )}
       </View>
 
-      {/* Address */}
       <View style={styles.addressBox}>
         <Text style={styles.sectionTitle}>Delivery Address</Text>
         <TextInput
@@ -129,7 +136,6 @@ export default function Checkout() {
         />
       </View>
 
-      {/* Items */}
       <View style={styles.itemsHeader}>
         <Text style={styles.sectionTitle}>Your Items</Text>
         <Text style={styles.itemsCount}>{items.length} items</Text>
