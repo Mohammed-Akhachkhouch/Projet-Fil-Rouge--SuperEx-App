@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 
 const router = express.Router();
 
-// GET all users
 router.get("/", async (req, res) => {
     try {
         const users = await User.findAll({ attributes: { exclude: ["password"] } });
@@ -14,7 +13,6 @@ router.get("/", async (req, res) => {
     }
 });
 
-// POST create new user
 router.post("/", async (req, res) => {
     try {
         const { username, email, password } = req.body;

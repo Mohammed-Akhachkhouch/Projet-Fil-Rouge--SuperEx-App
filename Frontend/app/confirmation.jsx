@@ -26,7 +26,8 @@ export default function Confirmation() {
       <TouchableOpacity
         style={styles.primaryBtn}
         activeOpacity={0.9}
-        onPress={() => router.replace('/(tabs)/orders')}
+        onPress={() => router.replace(`/order/${orderId}`)}
+
       >
         <Text style={styles.primaryText}>Track Order</Text>
       </TouchableOpacity>

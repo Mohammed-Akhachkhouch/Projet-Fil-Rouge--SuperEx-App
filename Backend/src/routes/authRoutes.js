@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// register
 router.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
     const hash = await bcrypt.hash(password, 10);
@@ -13,7 +12,6 @@ router.post("/register", async (req, res) => {
     res.json({ id: user.id, username: user.username, email: user.email });
 });
 
-// login
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
