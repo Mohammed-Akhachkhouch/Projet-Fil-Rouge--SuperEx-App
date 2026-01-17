@@ -5,13 +5,11 @@ import Product from "../models/product.js";
 
 const router = express.Router();
 
-// GET all orders
 router.get("/", async (req, res) => {
     const orders = await Order.findAll({ include: Product });
     res.json(orders);
 });
 
-// POST create order
 router.post("/", async (req, res) => {
     const { userId, items } = req.body;
     const order = await Order.create({ UserId: userId });
