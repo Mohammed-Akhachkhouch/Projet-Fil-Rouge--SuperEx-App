@@ -1,9 +1,10 @@
 import React, { useRef, useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Dimensions,TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Dimensions, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
+import { useLoginMutation, useSignupMutation } from "./hooks/useAuthMutations";
 
 const { width } = Dimensions.get('window');
 
@@ -11,37 +12,41 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ['85%', '95%'], []);
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const loginMut = useLoginMutation();
+  const signupMut = useSignupMutation();
+
   const handleGetStarted = () => {
     bottomSheetRef.current?.expand();
   };
 
-  const handleSubmit = () => {
-  if (isLogin) {
-    console.log('Login:', email, password);
-    bottomSheetRef.current?.close();
+  const handleSubmit = async () => {
+    try {
+      if (isLogin) {
+        await loginMut.mutateAsync({ email, password });
+      } else {
+        await signupMut.mutateAsync({ name, email, password });
+      }
 
-    router.replace('/(tabs)');
-  } else {
-    console.log('Signup:', name, email, password);
-    bottomSheetRef.current?.close();
-
-    router.replace('/(tabs)');
-  }
-};
-
+      bottomSheetRef.current?.close();
+      router.replace("/(tabs)");
+    } catch (e) {
+      console.log("AUTH ERROR:", e?.response?.data?.message || e.message);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
       <LottieView
-        source={require('../assets/Supermarket Cart.json')} 
+        source={require('../assets/Supermarket Cart.json')}
         autoPlay
         loop
         style={{ width: width * 0.7, height: width * 0.7, marginBottom: 30 }}
@@ -56,10 +61,7 @@ export default function WelcomeScreen() {
       </View>
 
       <View style={styles.buttons}>
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={handleGetStarted}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleGetStarted}>
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </View>
@@ -68,7 +70,7 @@ export default function WelcomeScreen() {
         ref={bottomSheetRef}
         index={-1}
         snapPoints={snapPoints}
-        enablePanDownToClose={true}
+        enablePanDownToClose
         backgroundStyle={styles.bottomSheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
@@ -89,6 +91,7 @@ export default function WelcomeScreen() {
             >
               <Text style={[styles.segmentText, isLogin && styles.segmentTextActive]}>Log In</Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={[styles.segment, !isLogin && styles.segmentActive]}
               onPress={() => setIsLogin(false)}
@@ -143,10 +146,8 @@ export default function WelcomeScreen() {
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
                 />
-                <TouchableOpacity
-                  style={styles.eyeIcon}
-                  onPress={() => setShowPassword(!showPassword)}
-                >
+
+                <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
                   <Ionicons
                     name={showPassword ? "eye-outline" : "eye-off-outline"}
                     size={20}
@@ -154,6 +155,7 @@ export default function WelcomeScreen() {
                   />
                 </TouchableOpacity>
               </View>
+
               {isLogin && (
                 <TouchableOpacity style={styles.forgotPassword}>
                   <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
@@ -161,13 +163,17 @@ export default function WelcomeScreen() {
               )}
             </View>
 
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleSubmit}
-              activeOpacity={0.9}
-            >
-              <Text style={styles.actionButtonText}>{isLogin ? 'Log In' : 'Create Account'}</Text>
+            <TouchableOpacity style={styles.actionButton} onPress={handleSubmit} activeOpacity={0.9}>
+              <Text style={styles.actionButtonText}>
+                {isLogin ? 'Log In' : 'Create Account'}
+              </Text>
             </TouchableOpacity>
+
+            {(loginMut.isPending || signupMut.isPending) ? (
+              <Text style={{ marginTop: 10, textAlign: 'center', color: '#64748b', fontWeight: '600' }}>
+                Please wait...
+              </Text>
+            ) : null}
           </View>
 
           <View style={styles.dividerContainer}>
@@ -249,10 +255,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold'
-  },
-  link: {
-    color: '#34A853',
-    marginTop: 10
   },
   bottomSheetBackground: {
     backgroundColor: '#fff',
