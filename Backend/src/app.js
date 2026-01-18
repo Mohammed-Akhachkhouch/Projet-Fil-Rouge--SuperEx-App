@@ -16,7 +16,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
-sequelize.sync({ force: true })
+sequelize.sync({ alter: true })
     .then(() => console.log("Database & tables created!"))
     .catch(err => console.log("DB sync error:", err));
 
