@@ -11,14 +11,12 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 
-// sync models with DB
-sequelize.sync({ alter: true })
+sequelize.sync({ force: true })
     .then(() => console.log("Database & tables created!"))
     .catch(err => console.log("DB sync error:", err));
 
