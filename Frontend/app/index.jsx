@@ -28,21 +28,39 @@ export default function WelcomeScreen() {
     bottomSheetRef.current?.expand();
   };
 
+  const resetFields = () => {
+    setEmail('');
+    setPassword('');
+    setName('');
+    setShowPassword(false);
+  };
+
   const handleSubmit = async () => {
     try {
       if (isLogin) {
-        await loginMut.mutateAsync({ email, password });
+        const data = await loginMut.mutateAsync({ email, password });
+
+        bottomSheetRef.current?.close();
+        resetFields();
+
+        const userRole = data?.user?.role || "customer";
+        if (userRole === "seller") router.replace("/(tabs)/seller");
+        else router.replace("/(tabs)");
       } else {
-        await signupMut.mutateAsync({
+        const data = await signupMut.mutateAsync({
           username: name,
           email,
           password,
           role,
         });
-      }
 
-      bottomSheetRef.current?.close();
-      router.replace("/(tabs)");
+        bottomSheetRef.current?.close();
+        resetFields();
+
+        const userRole = data?.user?.role || role || "customer";
+        if (userRole === "seller") router.replace("/(tabs)/seller");
+        else router.replace("/(tabs)");
+      }
     } catch (e) {
       console.log("AUTH ERROR:", e?.response?.data?.message || e.message);
     }
@@ -94,7 +112,10 @@ export default function WelcomeScreen() {
           <View style={styles.segmentedControl}>
             <TouchableOpacity
               style={[styles.segment, isLogin && styles.segmentActive]}
-              onPress={() => setIsLogin(true)}
+              onPress={() => {
+                setIsLogin(true);
+                resetFields();
+              }}
             >
               <Text style={[styles.segmentText, isLogin && styles.segmentTextActive]}>Log In</Text>
             </TouchableOpacity>
@@ -103,7 +124,8 @@ export default function WelcomeScreen() {
               style={[styles.segment, !isLogin && styles.segmentActive]}
               onPress={() => {
                 setIsLogin(false);
-                setRole("customer"); // ✅ يرجع role تلقائياً
+                setRole("customer");
+                resetFields();
               }}
             >
               <Text style={[styles.segmentText, !isLogin && styles.segmentTextActive]}>Sign Up</Text>
@@ -128,7 +150,6 @@ export default function WelcomeScreen() {
               </View>
             )}
 
-            {/* ✅ ROLE SELECTOR (Signup only) */}
             {!isLogin && (
               <View style={styles.fieldContainer}>
                 <Text style={styles.label}>Account Type</Text>
@@ -266,292 +287,61 @@ export default function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#fff'
-  },
-  content: {
-    alignItems: 'center',
-    marginBottom: 50
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
-    marginBottom: 5
-  },
-  subtitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#34A853',
-    marginBottom: 20
-  },
-  description: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    paddingHorizontal: 20
-  },
-  buttons: {
-    width: '100%',
-    alignItems: 'center'
-  },
-  button: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#34A853',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  bottomSheetBackground: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 16
-  },
-  handleIndicator: {
-    backgroundColor: '#e2e8f0',
-    width: 40,
-    height: 4
-  },
-  bottomSheetContent: {
-    flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 24
-  },
-  sheetIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#13ec5b',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8
-  },
-  sheetHeadline: {
-    alignItems: 'center',
-    marginBottom: 24
-  },
-  sheetMainTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    textAlign: 'center',
-    marginBottom: 8,
-    lineHeight: 34
-  },
-  sheetSubtitle: {
-    fontSize: 16,
-    color: '#64748b',
-    textAlign: 'center',
-    fontWeight: '500'
-  },
-  segmentedControl: {
-    flexDirection: 'row',
-    backgroundColor: '#f1f5f9',
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#e2e8f0'
-  },
-  segment: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderRadius: 8
-  },
-  segmentActive: {
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2
-  },
-  segmentText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#64748b'
-  },
-  segmentTextActive: {
-    fontWeight: 'bold',
-    color: '#1a1a1a'
-  },
-  sheetForm: {
-    marginBottom: 24
-  },
-  fieldContainer: {
-    marginBottom: 16
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1a1a1a',
-    marginBottom: 6,
-    marginLeft: 4
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 12,
-    height: 56
-  },
-  inputIcon: {
-    marginLeft: 16,
-    marginRight: 12
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1a1a1a',
-    height: '100%'
-  },
-  passwordInput: {
-    paddingRight: 48
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 16,
-    padding: 4
-  },
-  forgotPassword: {
-    alignSelf: 'flex-end',
-    marginTop: 4
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#0eb545'
-  },
-  actionButton: {
-    backgroundColor: '#13ec5b',
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 8,
-    shadowColor: '#13ec5b',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8
-  },
-  actionButtonText: {
-    color: '#0d1b12',
-    fontSize: 18,
-    fontWeight: 'bold',
-    letterSpacing: 0.5
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20
-  },
-  divider: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#e2e8f0'
-  },
-  dividerText: {
-    marginHorizontal: 16,
-    fontSize: 14,
-    color: '#64748b',
-    fontWeight: '500'
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-    marginBottom: 20
-  },
-  socialButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1
-  },
-  sheetFooter: {
-    alignItems: 'center',
-    paddingHorizontal: 16
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#94a3b8',
-    textAlign: 'center',
-    lineHeight: 18
-  },
-  footerLink: {
-    color: '#475569',
-    fontWeight: '500',
-    textDecorationLine: 'underline'
-  },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20, backgroundColor: '#fff' },
+  content: { alignItems: 'center', marginBottom: 50 },
+  title: { fontSize: 32, fontWeight: 'bold', color: '#1A1A1A', marginBottom: 5 },
+  subtitle: { fontSize: 32, fontWeight: 'bold', color: '#34A853', marginBottom: 20 },
+  description: { fontSize: 16, color: '#666', textAlign: 'center', paddingHorizontal: 20 },
+  buttons: { width: '100%', alignItems: 'center' },
+  button: { width: '100%', height: 50, backgroundColor: '#34A853', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
+  buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 
-  /* ✅ NEW STYLES FOR ROLE SELECTOR */
-  roleSwitch: {
-    flexDirection: "row",
-    gap: 10,
-    marginTop: 6,
-  },
-  roleBtn: {
-    flex: 1,
-    height: 52,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-    backgroundColor: "#f8fafc",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  roleBtnActive: {
-    backgroundColor: "#13ec5b",
-    borderColor: "#13ec5b",
-  },
-  roleText: {
-    fontWeight: "800",
-    color: "#64748b",
-  },
-  roleTextActive: {
-    color: "#0d1b12",
-  },
-  roleHint: {
-    marginTop: 8,
-    color: "#64748b",
-    fontWeight: "600",
-    fontSize: 12,
-  },
+  bottomSheetBackground: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: -4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 16 },
+  handleIndicator: { backgroundColor: '#e2e8f0', width: 40, height: 4 },
+  bottomSheetContent: { flex: 1, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 },
+
+  sheetIconContainer: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#13ec5b', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 },
+  sheetHeadline: { alignItems: 'center', marginBottom: 24 },
+  sheetMainTitle: { fontSize: 28, fontWeight: 'bold', color: '#1a1a1a', textAlign: 'center', marginBottom: 8, lineHeight: 34 },
+  sheetSubtitle: { fontSize: 16, color: '#64748b', textAlign: 'center', fontWeight: '500' },
+
+  segmentedControl: { flexDirection: 'row', backgroundColor: '#f1f5f9', borderRadius: 12, padding: 4, marginBottom: 24, borderWidth: 1, borderColor: '#e2e8f0' },
+  segment: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 8 },
+  segmentActive: { backgroundColor: '#fff', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 },
+  segmentText: { fontSize: 14, fontWeight: '500', color: '#64748b' },
+  segmentTextActive: { fontWeight: 'bold', color: '#1a1a1a' },
+
+  sheetForm: { marginBottom: 24 },
+  fieldContainer: { marginBottom: 16 },
+  label: { fontSize: 14, fontWeight: '600', color: '#1a1a1a', marginBottom: 6, marginLeft: 4 },
+
+  inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0', borderRadius: 12, height: 56 },
+  inputIcon: { marginLeft: 16, marginRight: 12 },
+  input: { flex: 1, fontSize: 16, color: '#1a1a1a', height: '100%' },
+  passwordInput: { paddingRight: 48 },
+  eyeIcon: { position: 'absolute', right: 16, padding: 4 },
+
+  forgotPassword: { alignSelf: 'flex-end', marginTop: 4 },
+  forgotPasswordText: { fontSize: 14, fontWeight: '600', color: '#0eb545' },
+
+  actionButton: { backgroundColor: '#13ec5b', height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', marginTop: 8, shadowColor: '#13ec5b', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 12, elevation: 8 },
+  actionButtonText: { color: '#0d1b12', fontSize: 18, fontWeight: 'bold', letterSpacing: 0.5 },
+
+  dividerContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
+  divider: { flex: 1, height: 1, backgroundColor: '#e2e8f0' },
+  dividerText: { marginHorizontal: 16, fontSize: 14, color: '#64748b', fontWeight: '500' },
+
+  socialButtons: { flexDirection: 'row', justifyContent: 'center', gap: 16, marginBottom: 20 },
+  socialButton: { width: 56, height: 56, borderRadius: 28, backgroundColor: '#fff', borderWidth: 1, borderColor: '#e2e8f0', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+
+  sheetFooter: { alignItems: 'center', paddingHorizontal: 16 },
+  footerText: { fontSize: 12, color: '#94a3b8', textAlign: 'center', lineHeight: 18 },
+  footerLink: { color: '#475569', fontWeight: '500', textDecorationLine: 'underline' },
+
+  roleSwitch: { flexDirection: "row", gap: 10, marginTop: 6 },
+  roleBtn: { flex: 1, height: 52, borderRadius: 12, borderWidth: 1, borderColor: "#e2e8f0", backgroundColor: "#f8fafc", flexDirection: "row", alignItems: "center", justifyContent: "center" },
+  roleBtnActive: { backgroundColor: "#13ec5b", borderColor: "#13ec5b" },
+  roleText: { fontWeight: "800", color: "#64748b" },
+  roleTextActive: { color: "#0d1b12" },
+  roleHint: { marginTop: 8, color: "#64748b", fontWeight: "600", fontSize: 12 },
 });

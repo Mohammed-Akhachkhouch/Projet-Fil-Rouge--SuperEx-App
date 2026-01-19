@@ -1,10 +1,14 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useAuthStore } from "../../store/authStore.js";
 
 export default function TabsLayout() {
   const router = useRouter();
+
+  // ✅ نجيبو user من الستور ونحددو isSeller
+  const user = useAuthStore((s) => s.user);
+  const isSeller = user?.role === "seller";
 
   return (
     <Tabs
@@ -22,6 +26,7 @@ export default function TabsLayout() {
         },
       }}
     >
+      {/* ✅ Home */}
       <Tabs.Screen
         name="index"
         options={{
@@ -32,6 +37,7 @@ export default function TabsLayout() {
         }}
       />
 
+      {/* ✅ Search */}
       <Tabs.Screen
         name="search"
         options={{
@@ -42,6 +48,7 @@ export default function TabsLayout() {
         }}
       />
 
+      {/* ✅ Cart (وسط) */}
       <Tabs.Screen
         name="cart"
         options={{
@@ -51,7 +58,7 @@ export default function TabsLayout() {
               <TouchableOpacity
                 style={styles.cartButton}
                 activeOpacity={0.85}
-                onPress={() => router.push("/cart")}
+                onPress={() => router.push("/(tabs)/cart")} // ✅ مهم داخل tabs
               >
                 <Ionicons name="cart" size={26} color="#fff" />
               </TouchableOpacity>
@@ -60,6 +67,7 @@ export default function TabsLayout() {
         }}
       />
 
+      {/* ✅ Orders */}
       <Tabs.Screen
         name="orders"
         options={{
@@ -70,12 +78,25 @@ export default function TabsLayout() {
         }}
       />
 
+      {/* ✅ Profile */}
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" color={color} size={size} />
+          ),
+        }}
+      />
+
+      {/* ✅ Seller: يبان غير إلا كان seller */}
+      <Tabs.Screen
+        name="seller"
+        options={{
+          title: "Seller",
+          href: isSeller ? "/(tabs)/seller" : null, // ✅ hide if not seller
+          tabBarIcon: ({ size, color }) => (
+            <Ionicons name="storefront-outline" size={size} color={color} />
           ),
         }}
       />
@@ -96,8 +117,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#34A853",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 6, 
-    shadowColor: "#000", 
+    elevation: 6,
+    shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 6 },
