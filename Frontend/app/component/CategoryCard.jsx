@@ -1,11 +1,13 @@
 import { Text, StyleSheet, TouchableOpacity, ImageBackground, View } from 'react-native';
 
-export default function CategoryCard({ title, image, onPress }) {
+export default function CategoryCard({ name, image, onPress }) {
+  const imageSource = typeof image === 'string' ? { uri: image } : image;
+  
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
-      <ImageBackground source={image} style={styles.image} imageStyle={styles.imageRadius}>
+      <ImageBackground source={imageSource} style={styles.image} imageStyle={styles.imageRadius}>
         <View style={styles.overlay} />
-        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.title}>{name}</Text>
       </ImageBackground>
     </TouchableOpacity>
   );

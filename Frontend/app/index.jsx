@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import LottieView from 'lottie-react-native';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
-import { useLoginMutation, useSignupMutation } from "./hooks/useAuthMutations";
+import { useLoginMutation, useSignupMutation } from "../hooks/useAuthMutations.js";
 
 const { width } = Dimensions.get('window');
 

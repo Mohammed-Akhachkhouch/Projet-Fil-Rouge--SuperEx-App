@@ -1,7 +1,7 @@
-import meat from '../../assets/images/meat.png';
-import dairy from '../../assets/images/dairy.png';
-import bakery from '../../assets/images/bakery.png';
-import fruitsvegetables from '../../assets/images/Vegetables.png';
+import meat from '../assets/images/meat.png';
+import dairy from '../assets/images/dairy.png';
+import bakery from '../assets/images/bakery.png';
+import fruitsvegetables from '../assets/images/Vegetables.png';
 
 export const PRODUCTS = [
   {

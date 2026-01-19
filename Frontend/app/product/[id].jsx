@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { PRODUCTS } from '../data/products';
-import { useCartStore } from '../store/cartStore';
+import { PRODUCTS } from '../../data/products.js';
+import { useCartStore } from '../../store/cartStore.js';
 
 export default function ProductDetails() {
   const router = useRouter();
