@@ -7,7 +7,6 @@ import Category from "./category.js";
 import Order from "./order.js";
 import OrderItem from "./orderItem.js";
 
-
 User.hasMany(Order, {
   foreignKey: { name: "userId", allowNull: false },
   onDelete: "CASCADE",
@@ -27,6 +26,18 @@ Category.hasMany(Product, {
 
 Product.belongsTo(Category, {
   foreignKey: { name: "categoryId", allowNull: false },
+});
+
+
+User.hasMany(Product, {
+  foreignKey: { name: "sellerId", allowNull: false },
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+Product.belongsTo(User, {
+  foreignKey: { name: "sellerId", allowNull: false },
+  as: "seller",
 });
 
 

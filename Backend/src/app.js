@@ -8,7 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/user.js";
 import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import Catrgory from "./routes/categoryRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -20,10 +20,13 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/categories", Catrgory);
+app.use("/api/categories", categoryRoutes);
 
-sequelize.sync({ alter: true })
-    .then(() => console.log("Database & tables created!"))
-    .catch(err => console.log("DB sync error:", err));
+const force = String(process.env.DB_SYNC_FORCE || "false") === "true";
+
+sequelize
+  .sync({ force })
+  .then(() => console.log("Database & tables created!", force ? "(force)" : ""))
+  .catch((err) => console.log("DB sync error:", err));
 
 export default app;
