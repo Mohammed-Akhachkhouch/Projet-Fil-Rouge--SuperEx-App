@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useCartStore } from '../store/cartStore';
+import { useCartStore } from '../../store/cartStore.js';
 import { useRouter } from 'expo-router';
 
 export default function Cart() {

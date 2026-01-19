@@ -1,4 +1,4 @@
-// src/models/index.js
+
 import { sequelize } from "../config/database.js";
 
 import User from "./user.js";
@@ -7,9 +7,7 @@ import Category from "./category.js";
 import Order from "./order.js";
 import OrderItem from "./orderItem.js";
 
-// =========================
-// User <-> Orders
-// =========================
+
 User.hasMany(Order, {
   foreignKey: { name: "userId", allowNull: false },
   onDelete: "CASCADE",
@@ -20,9 +18,7 @@ Order.belongsTo(User, {
   foreignKey: { name: "userId", allowNull: false },
 });
 
-// =========================
-// Category <-> Products
-// =========================
+
 Category.hasMany(Product, {
   foreignKey: { name: "categoryId", allowNull: false },
   onDelete: "CASCADE",
@@ -33,10 +29,7 @@ Product.belongsTo(Category, {
   foreignKey: { name: "categoryId", allowNull: false },
 });
 
-// =========================
-// Orders <-> Products (Through OrderItem)
-// IMPORTANT: OrderItem model must contain orderId & productId fields
-// =========================
+
 Order.belongsToMany(Product, {
   through: OrderItem,
   foreignKey: "orderId",

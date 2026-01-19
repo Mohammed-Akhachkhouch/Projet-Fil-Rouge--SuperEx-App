@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import * as Location from 'expo-location';
 import MapView, { Marker } from 'react-native-maps';
 
-import { useCartStore } from './store/cartStore';
+import { useCartStore } from '../store/cartStore.js';
 
 export default function Checkout() {
   const router = useRouter();
