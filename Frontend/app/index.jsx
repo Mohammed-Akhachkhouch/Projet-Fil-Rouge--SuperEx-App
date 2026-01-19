@@ -19,6 +19,8 @@ export default function WelcomeScreen() {
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
+  const [role, setRole] = useState("customer");
+
   const loginMut = useLoginMutation();
   const signupMut = useSignupMutation();
 
@@ -31,7 +33,12 @@ export default function WelcomeScreen() {
       if (isLogin) {
         await loginMut.mutateAsync({ email, password });
       } else {
-        await signupMut.mutateAsync({ name, email, password });
+        await signupMut.mutateAsync({
+          username: name,
+          email,
+          password,
+          role,
+        });
       }
 
       bottomSheetRef.current?.close();
@@ -94,7 +101,10 @@ export default function WelcomeScreen() {
 
             <TouchableOpacity
               style={[styles.segment, !isLogin && styles.segmentActive]}
-              onPress={() => setIsLogin(false)}
+              onPress={() => {
+                setIsLogin(false);
+                setRole("customer"); // ✅ يرجع role تلقائياً
+              }}
             >
               <Text style={[styles.segmentText, !isLogin && styles.segmentTextActive]}>Sign Up</Text>
             </TouchableOpacity>
@@ -115,6 +125,53 @@ export default function WelcomeScreen() {
                     autoCapitalize="words"
                   />
                 </View>
+              </View>
+            )}
+
+            {/* ✅ ROLE SELECTOR (Signup only) */}
+            {!isLogin && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.label}>Account Type</Text>
+
+                <View style={styles.roleSwitch}>
+                  <TouchableOpacity
+                    style={[styles.roleBtn, role === "customer" && styles.roleBtnActive]}
+                    onPress={() => setRole("customer")}
+                    activeOpacity={0.9}
+                  >
+                    <Ionicons
+                      name="person-outline"
+                      size={18}
+                      color={role === "customer" ? "#0d1b12" : "#64748b"}
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={[styles.roleText, role === "customer" && styles.roleTextActive]}>
+                      Customer
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[styles.roleBtn, role === "seller" && styles.roleBtnActive]}
+                    onPress={() => setRole("seller")}
+                    activeOpacity={0.9}
+                  >
+                    <Ionicons
+                      name="storefront-outline"
+                      size={18}
+                      color={role === "seller" ? "#0d1b12" : "#64748b"}
+                      style={{ marginRight: 8 }}
+                    />
+                    <Text style={[styles.roleText, role === "seller" && styles.roleTextActive]}>
+                      Seller
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.roleHint}>
+                  {role === "seller"
+                    ? "Seller can add products later."
+                    : "Customer can browse and order products."}
+                </Text>
               </View>
             )}
 
@@ -461,5 +518,40 @@ const styles = StyleSheet.create({
     color: '#475569',
     fontWeight: '500',
     textDecorationLine: 'underline'
-  }
+  },
+
+  /* ✅ NEW STYLES FOR ROLE SELECTOR */
+  roleSwitch: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 6,
+  },
+  roleBtn: {
+    flex: 1,
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
+    backgroundColor: "#f8fafc",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  roleBtnActive: {
+    backgroundColor: "#13ec5b",
+    borderColor: "#13ec5b",
+  },
+  roleText: {
+    fontWeight: "800",
+    color: "#64748b",
+  },
+  roleTextActive: {
+    color: "#0d1b12",
+  },
+  roleHint: {
+    marginTop: 8,
+    color: "#64748b",
+    fontWeight: "600",
+    fontSize: 12,
+  },
 });
