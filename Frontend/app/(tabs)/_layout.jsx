@@ -6,7 +6,6 @@ import { useAuthStore } from "../../store/authStore.js";
 export default function TabsLayout() {
   const router = useRouter();
 
-  // ✅ نجيبو user من الستور ونحددو isSeller
   const user = useAuthStore((s) => s.user);
   const isSeller = user?.role === "seller";
 
@@ -26,7 +25,6 @@ export default function TabsLayout() {
         },
       }}
     >
-      {/* ✅ Home */}
       <Tabs.Screen
         name="index"
         options={{
@@ -37,7 +35,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* ✅ Search */}
       <Tabs.Screen
         name="search"
         options={{
@@ -48,7 +45,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* ✅ Cart (وسط) */}
       <Tabs.Screen
         name="cart"
         options={{
@@ -58,7 +54,7 @@ export default function TabsLayout() {
               <TouchableOpacity
                 style={styles.cartButton}
                 activeOpacity={0.85}
-                onPress={() => router.push("/(tabs)/cart")} // ✅ مهم داخل tabs
+                onPress={() => router.push("/(tabs)/cart")} 
               >
                 <Ionicons name="cart" size={26} color="#fff" />
               </TouchableOpacity>
@@ -67,7 +63,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* ✅ Orders */}
       <Tabs.Screen
         name="orders"
         options={{
@@ -78,7 +73,6 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* ✅ Profile */}
       <Tabs.Screen
         name="profile"
         options={{
@@ -89,12 +83,11 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* ✅ Seller: يبان غير إلا كان seller */}
       <Tabs.Screen
         name="seller"
         options={{
           title: "Seller",
-          href: isSeller ? "/(tabs)/seller" : null, // ✅ hide if not seller
+          href: isSeller ? "/(tabs)/seller" : null, 
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="storefront-outline" size={size} color={color} />
           ),
