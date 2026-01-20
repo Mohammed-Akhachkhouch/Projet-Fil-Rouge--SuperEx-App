@@ -49,8 +49,12 @@ console.log("✅ Categories seeded (4)");
 
     const catMap = Object.fromEntries(categories.map((c) => [c.name, c.id]));
 
-  
-    
+    const products = [
+      { name: "Fresh Tomatoes", price: 2.99, categoryId: catMap["Fruits & Vegetables"], sellerId, image: "https://ik.imagekit.io/acqqus74p/images/Vegetables.png" },
+      { name: "Organic Apples", price: 3.49, categoryId: catMap["Fruits & Vegetables"], sellerId, image: "https://ik.imagekit.io/acqqus74p/images/Vegetables.png" },
+      { name: "Prime Beef", price: 12.99, categoryId: catMap["Meat & Fish"], sellerId, image: "https://ik.imagekit.io/acqqus74p/images/meat.png" },
+      { name: "Orange Juice", price: 1.99, categoryId: catMap["Drinks"], sellerId, image: "https://ik.imagekit.io/acqqus74p/images/dairy.png" },
+    ];
 
     await Product.bulkCreate(products);
     console.log("✅ Sample products seeded (4) - for testing");

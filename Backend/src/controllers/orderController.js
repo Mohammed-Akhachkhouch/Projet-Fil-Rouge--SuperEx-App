@@ -35,6 +35,21 @@ export const createOrder = async (req, res) => {
   }
 };
 
+export const getOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log("Fetching orders for user:", userId);
+
+    const orders = await Order.findAll({ where: { userId } });
+    console.log("Found orders:", orders);
+
+    return res.json({ orders });
+  } catch (err) {
+    console.error("GET ORDERS ERROR:", err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 export const getOrderById = async (req, res) => {
   try {
     const orderId = Number(req.params.id);
