@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/env";
-import { useAuthStore } from "../store/authStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const http = axios.create({
   baseURL: API_URL,
@@ -8,8 +8,23 @@ export const http = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-http.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+http.interceptors.request.use(async (config) => {
+  try {
+    const token = await AsyncStorage.getItem("userToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } catch (e) {
+    console.log("Error getting token:", e);
+  }
   return config;
 });
+
+http.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("userData");
+    }
+    return Promise.reject(error);
+  }
+);

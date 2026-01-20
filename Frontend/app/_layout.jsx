@@ -29,7 +29,7 @@ export default function RootLayout() {
         setRestoring(false);
       }
     })();
-  }, []);
+  }, [setAuth]);
 
   if (restoring) {
     return (
@@ -50,7 +50,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }  }>
           <Stack.Screen name="index" />    
           <Stack.Screen name="(tabs)" />   
-          <Stack.Screen name="cart" />    
+          <Stack.Screen name="(seller)" />
         </Stack>
       </BottomSheetModalProvider>
       </SafeAreaView>
