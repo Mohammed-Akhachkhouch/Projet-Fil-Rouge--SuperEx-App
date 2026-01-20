@@ -13,7 +13,9 @@ const Product = sequelize.define(
 
     categoryId: { type: DataTypes.INTEGER, allowNull: false },
 
-    image: { type: DataTypes.STRING, allowNull: true }, // URL
+    image: { type: DataTypes.STRING, allowNull: true },
+    description: { type: DataTypes.TEXT, allowNull: true }, 
+    qtyLabel: { type: DataTypes.STRING, allowNull: true, defaultValue: "unit" },
     isActive: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
 
     sellerId: { type: DataTypes.INTEGER, allowNull: false },
