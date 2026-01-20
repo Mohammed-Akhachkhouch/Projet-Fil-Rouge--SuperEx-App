@@ -8,11 +8,15 @@ export default function ProductCard({ item, onAdd }) {
   const router = useRouter();
 
   const imageSource =
-    item?.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.startsWith("http")
+    item?.image && typeof item.image === "string" && item.image.startsWith("http")
+      ? { uri: item.image }
+      : item?.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.startsWith("http")
       ? { uri: item.imageUrl }
       : placeholder;
 
   const goDetails = () => router.push(`/product/${item.id}`);
+  
+  const sellerName = item?.seller?.storeName || item?.seller?.username || "Unknown Store";
 
   return (
     <Pressable style={styles.card} onPress={goDetails}>
@@ -24,6 +28,11 @@ export default function ProductCard({ item, onAdd }) {
       </View>
 
       <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+      
+      <Text style={styles.storeName} numberOfLines={1}>
+        <Ionicons name="storefront" size={12} color="#34A853" /> {sellerName}
+      </Text>
+      
       <Text style={styles.qty} numberOfLines={1}>{item.qtyLabel || ""}</Text>
 
       <View style={styles.bottomRow}>
@@ -49,6 +58,7 @@ const styles = StyleSheet.create({
   image: { width: "100%", height: "100%", resizeMode: "cover" },
   favBtn: { position: "absolute", top: 10, right: 10, width: 30, height: 30, borderRadius: 15, backgroundColor: "rgba(255,255,255,0.9)", justifyContent: "center", alignItems: "center" },
   name: { marginTop: 10, fontSize: 15, fontWeight: "700", color: "#111" },
+  storeName: { marginTop: 4, fontSize: 12, color: "#34A853", fontWeight: "600" },
   qty: { marginTop: 2, fontSize: 12, color: "#7B8794" },
   bottomRow: { marginTop: 10, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   price: { fontSize: 16, fontWeight: "800", color: "#111" },

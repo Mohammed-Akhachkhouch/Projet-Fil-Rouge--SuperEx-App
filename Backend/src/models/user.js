@@ -17,6 +17,10 @@ const User = sequelize.define(
       allowNull: false,
       defaultValue: "customer",
     },
+
+    storeName: { type: DataTypes.STRING, allowNull: true },
+    storeAddress: { type: DataTypes.STRING, allowNull: true },
+    storePhone: { type: DataTypes.STRING, allowNull: true },
   },
   {
     tableName: "users",

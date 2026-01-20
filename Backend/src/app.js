@@ -26,11 +26,11 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/seller", sellerRoutes);
 
-const force = String(process.env.DB_SYNC_FORCE || "false") === "true";
+const force = false; 
 
 sequelize
   .sync({ force })
-  .then(() => console.log("Database & tables created!", force ? "(force)" : ""))
+  .then(() => console.log("Database & tables ready!", force ? "(force rebuild)" : ""))
   .catch((err) => console.log("DB sync error:", err));
 
 export default app;

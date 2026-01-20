@@ -1,4 +1,4 @@
-import { Product, Category } from "../models/index.js";
+import { Product, Category, User } from "../models/index.js";
 
 export const getProducts = async (req, res) => {
   try {
@@ -6,10 +6,17 @@ export const getProducts = async (req, res) => {
     const { category } = req.query;
 
     const products = await Product.findAll({
-      include: [{
-        model: Category,
-        attributes: ["id", "name"]
-      }],
+      include: [
+        {
+          model: Category,
+          attributes: ["id", "name"]
+        },
+        {
+          model: User,
+          as: "seller",
+          attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"]
+        }
+      ],
       order: [["id", "ASC"]],
     });
 
@@ -30,7 +37,17 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id, {
-      include: [{ model: Category, attributes: ["id", "name"] }],
+      include: [
+        { 
+          model: Category, 
+          attributes: ["id", "name"] 
+        },
+        {
+          model: User,
+          as: "seller",
+          attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"]
+        }
+      ],
     });
 
     if (!product) return res.status(404).json({ message: "Product not found" });
@@ -44,13 +61,21 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, stock = 0, categoryId, qtyLabel, description, imageUrl } = req.body;
+    const { name, price, stock = 0, categoryId, qtyLabel, description, imageUrl, image } = req.body;
 
     if (!name || price == null || !categoryId) {
       return res.status(400).json({ message: "name, price, categoryId are required" });
     }
 
-    const product = await Product.create({ name, price, stock, categoryId, qtyLabel, description, imageUrl });
+    const product = await Product.create({ 
+      name, 
+      price, 
+      stock, 
+      categoryId, 
+      qtyLabel, 
+      description, 
+      image: image || imageUrl 
+    });
     return res.status(201).json(product);
   } catch (err) {
     console.error("CREATE PRODUCT ERROR:", err);

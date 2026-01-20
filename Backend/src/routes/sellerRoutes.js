@@ -1,6 +1,7 @@
 import express from "express";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
+import User from "../models/user.js";
 import { requireAuth } from "../middlewares/requireAuth.js";
 
 const router = express.Router();
@@ -12,17 +13,59 @@ const requireSeller = (req, res, next) => {
   next();
 };
 
-// GET seller products
+router.get("/profile", requireAuth, requireSeller, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"]
+    });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put("/profile", requireAuth, requireSeller, async (req, res) => {
+  try {
+    const { storeName, storeAddress, storePhone } = req.body;
+    
+    const user = await User.findByPk(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    await user.update({
+      storeName: storeName ?? user.storeName,
+      storeAddress: storeAddress ?? user.storeAddress,
+      storePhone: storePhone ?? user.storePhone,
+    });
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      storeName: user.storeName,
+      storeAddress: user.storeAddress,
+      storePhone: user.storePhone,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get("/products", requireAuth, requireSeller, async (req, res) => {
   const products = await Product.findAll({
     where: { sellerId: req.user.id },
-    include: [{ model: Category, attributes: ["id", "name"] }],
+    include: [
+      { model: Category, attributes: ["id", "name"] },
+      { 
+        model: User, 
+        as: "seller", 
+        attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"] 
+      }
+    ],
     order: [["createdAt", "DESC"]],
   });
   res.json(products);
 });
 
-// POST create product
 router.post("/products", requireAuth, requireSeller, async (req, res) => {
   const { name, price, stock, categoryId, image, isActive } = req.body;
 
@@ -43,7 +86,6 @@ router.post("/products", requireAuth, requireSeller, async (req, res) => {
   res.status(201).json(product);
 });
 
-// PUT update product
 router.put("/products/:id", requireAuth, requireSeller, async (req, res) => {
   const id = Number(req.params.id);
   const product = await Product.findOne({ where: { id, sellerId: req.user.id } });
@@ -63,7 +105,6 @@ router.put("/products/:id", requireAuth, requireSeller, async (req, res) => {
   res.json(product);
 });
 
-// DELETE product
 router.delete("/products/:id", requireAuth, requireSeller, async (req, res) => {
   const id = Number(req.params.id);
   const product = await Product.findOne({ where: { id, sellerId: req.user.id } });

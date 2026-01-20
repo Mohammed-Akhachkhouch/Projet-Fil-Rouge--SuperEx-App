@@ -1,5 +1,14 @@
-// app/services/sellerService.js
 import { http } from "./http";
+
+export const getSellerProfile = async () => {
+  const res = await http.get("/seller/profile");
+  return res.data;
+};
+
+export const updateSellerProfile = async (payload) => {
+  const res = await http.put("/seller/profile", payload);
+  return res.data;
+};
 
 export const getMyProducts = async () => {
   const res = await http.get("/seller/products");
