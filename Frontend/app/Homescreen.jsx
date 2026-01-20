@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList, ActivityIndicator, RefreshControl } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
 import { useState, useRef, useMemo } from "react";
@@ -13,14 +13,15 @@ import { useProducts } from "../hooks/useProducts";
 
 export default function Homescreen() {
   const [search, setSearch] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
   const sheetRef = useRef(null);
   const snapPoints = useMemo(() => ["85%"], []);
   const [catSearch, setCatSearch] = useState("");
 
   const router = useRouter();
 
-  const { data: categories = [], isLoading: catLoading } = useCategories();
-  const { data: products = [], isLoading: prodLoading } = useProducts();
+  const { data: categories = [], isLoading: catLoading, refetch: refetchCategories } = useCategories();
+  const { data: products = [], isLoading: prodLoading, refetch: refetchProducts } = useProducts();
 
   const openCategoriesSheet = () => {
     setCatSearch("");
@@ -29,6 +30,15 @@ export default function Homescreen() {
 
   const closeCategoriesSheet = () => {
     sheetRef.current?.dismiss();
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([refetchCategories(), refetchProducts()]);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const displayedCategories = categories.slice(0, 4);
@@ -46,7 +56,17 @@ export default function Homescreen() {
     <View style={styles.screen}>
       <StatusBar style="dark" />
 
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        contentContainerStyle={styles.container} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#34A853"
+          />
+        }
+      >
         <SearchBar value={search} onChange={setSearch} />
 
         <View style={styles.sectionHeader}>

@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../../store/cartStore.js';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 
 export default function Cart() {
+  const [refreshing, setRefreshing] = useState(false);
   const items = useCartStore((s) => s.items);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
   const setQuantity = useCartStore((s) => s.setQuantity);
@@ -11,6 +13,15 @@ export default function Cart() {
   const router = useRouter();
 
   const total = totalPrice();
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   if (items.length === 0) {
     return (
@@ -30,6 +41,13 @@ export default function Cart() {
         data={items}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 140 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#34A853"
+          />
+        }
         renderItem={({ item }) => (
           <View style={styles.row}>
             <Image source={item.image} style={styles.image} />

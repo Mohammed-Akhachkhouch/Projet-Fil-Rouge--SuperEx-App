@@ -19,3 +19,8 @@ export const createProduct = async (payload) => {
   const res = await http.post("/seller/products", payload);
   return res.data;
 };
+
+export const getSellerOrders = async () => {
+  const res = await http.get("/seller/orders");
+  return res.data;
+};

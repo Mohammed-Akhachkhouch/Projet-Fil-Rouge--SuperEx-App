@@ -2,6 +2,7 @@ import express from "express";
 import Product from "../models/product.js";
 import Category from "../models/category.js";
 import User from "../models/user.js";
+import { Order, OrderItem } from "../models/index.js";
 import { requireAuth } from "../middlewares/requireAuth.js";
 
 const router = express.Router();
@@ -23,6 +24,65 @@ router.get("/profile", requireAuth, requireSeller, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+router.get("/orders", requireAuth, requireSeller, async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+
+    // الحصول على جميع الـ order items الخاصة بمنتجات هذا الـ seller
+    const sellerOrders = await OrderItem.findAll({
+      include: [
+        {
+          model: Product,
+          where: { sellerId },
+          attributes: ["id", "name", "price"],
+        },
+        {
+          model: Order,
+          attributes: ["id", "status", "createdAt", "userId"],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "username", "email"],
+            },
+          ],
+        },
+      ],
+    });
+
+    // تجميع النتائج حسب Order ID
+    const ordersMap = {};
+    sellerOrders.forEach((item) => {
+      const orderId = item.Order.id;
+      if (!ordersMap[orderId]) {
+        ordersMap[orderId] = {
+          id: item.Order.id,
+          status: item.Order.status,
+          createdAt: item.Order.createdAt,
+          customerId: item.Order.userId,
+          customerName: item.Order.User.username,
+          customerEmail: item.Order.User.email,
+          items: [],
+          total: 0,
+        };
+      }
+      ordersMap[orderId].items.push({
+        productId: item.Product.id,
+        productName: item.Product.name,
+        quantity: item.quantity,
+        price: item.price,
+      });
+      ordersMap[orderId].total += item.quantity * item.price;
+    });
+
+    const orders = Object.values(ordersMap);
+    return res.json({ orders });
+  } catch (err) {
+    console.error("GET SELLER ORDERS ERROR:", err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 
 router.put("/profile", requireAuth, requireSeller, async (req, res) => {
   try {
