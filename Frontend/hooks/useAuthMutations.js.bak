@@ -1,7 +1,7 @@
+// backup of original file
 import { useMutation } from "@tanstack/react-query";
 import { login, signup } from "../services/authService";
 import { useAuthStore } from "../store/authStore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function useLoginMutation() {
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -10,12 +10,6 @@ export function useLoginMutation() {
     mutationFn: login,
     onSuccess: (data) => {
       setAuth(data.user, data.token);
-      try {
-        AsyncStorage.setItem("userToken", data.token);
-        AsyncStorage.setItem("userData", JSON.stringify(data.user));
-      } catch (e) {
-        console.log("Failed to persist auth:", e);
-      }
     },
   });
 }
@@ -27,12 +21,6 @@ export function useSignupMutation() {
     mutationFn: signup,
     onSuccess: (data) => {
       setAuth(data.user, data.token);
-      try {
-        AsyncStorage.setItem("userToken", data.token);
-        AsyncStorage.setItem("userData", JSON.stringify(data.user));
-      } catch (e) {
-        console.log("Failed to persist auth:", e);
-      }
     },
   });
 }

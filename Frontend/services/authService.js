@@ -16,8 +16,14 @@ export const logout = async () => {
     // استدعاء API logout (إن وجد)
     await http.post("/auth/logout");
   } catch (error) {
-    // نتابع حتى لو فشل API call
-    console.log("Logout API call failed:", error.message);
+    // إذا كانت الـ API لا تحتوي على endpoint للـ logout (404)، نتجاهل الخطأ
+    const status = error?.response?.status;
+    if (status && status === 404) {
+      // لا نطبع أي شيء - نتعامل مع الحالة كما لو أن الخروج ناجح
+    } else {
+      // اطبع باقي الأخطاء لمساعدة التصحيح
+      console.log("Logout API call failed:", error.message);
+    }
   } finally {
     // حذف البيانات المحفوظة
     await AsyncStorage.removeItem("userToken");
