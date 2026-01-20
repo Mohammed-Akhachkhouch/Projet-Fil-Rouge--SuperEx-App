@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SellerProfile() {
   const router = useRouter();
@@ -10,28 +10,34 @@ export default function SellerProfile() {
   const logout = useAuthStore((s) => s.logout);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  if (!user) {
-    return (
-      <View style={styles.center}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
+  useEffect(() => {
+    if (!user && !isLoggingOut) {
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+    }
+  }, [user, isLoggingOut]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      router.replace("/");
     } catch (error) {
       console.log("Logout error:", error);
       setIsLoggingOut(false);
     }
   };
 
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#34A853" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-      {/* Profile Header */}
       <View style={styles.headerCard}>
         <View style={styles.avatar}>
           <Ionicons name="storefront" size={80} color="#34A853" />
@@ -46,7 +52,6 @@ export default function SellerProfile() {
         </View>
       </View>
 
-      {/* Store Information */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Store Details</Text>
 
@@ -81,7 +86,6 @@ export default function SellerProfile() {
         </View>
       </View>
 
-      {/* Owner Information */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Owner Information</Text>
 
@@ -116,7 +120,6 @@ export default function SellerProfile() {
         </View>
       </View>
 
-      {/* Logout Button */}
       <TouchableOpacity
         style={styles.logoutBtn}
         onPress={handleLogout}

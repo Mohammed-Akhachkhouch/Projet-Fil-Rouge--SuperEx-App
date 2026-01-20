@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Profile() {
   const router = useRouter();
@@ -10,25 +10,31 @@ export default function Profile() {
   const logout = useAuthStore((s) => s.logout);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  if (!user) {
-    return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#34A853" />
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
+  useEffect(() => {
+    if (!user && !isLoggingOut) {
+      setTimeout(() => {
+        router.push("/");
+      }, 100);
+    }
+  }, [user, isLoggingOut]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await logout();
-      router.replace("/");
     } catch (error) {
       console.log("Logout error:", error);
       setIsLoggingOut(false);
     }
   };
+
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#34A853" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.container}>

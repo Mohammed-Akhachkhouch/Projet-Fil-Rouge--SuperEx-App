@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function SellerOrders() {
   const [refreshing, setRefreshing] = useState(false);
-  const { data, isLoading, error } = useSellerOrders();
+  const { data, isLoading, error, refetch } = useSellerOrders();
 
   const orders = data?.orders || [];
 
