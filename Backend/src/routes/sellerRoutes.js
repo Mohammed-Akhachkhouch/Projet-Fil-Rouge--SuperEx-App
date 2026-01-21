@@ -14,6 +14,70 @@ const requireSeller = (req, res, next) => {
   next();
 };
 
+router.get("/stats", requireAuth, requireSeller, async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+
+    // 1. Calculate Total Revenue & Total Orders
+    const sellerOrders = await OrderItem.findAll({
+      include: [
+        {
+          model: Product,
+          where: { sellerId },
+          attributes: ["price"],
+        },
+        {
+          model: Order,
+          attributes: ["id", "createdAt", "status"],
+          include: [{ model: User, attributes: ["username"] }]
+        }
+      ],
+      order: [[Order, "createdAt", "DESC"]]
+    });
+
+    const ordersMap = {};
+    let totalRevenue = 0;
+
+    sellerOrders.forEach((item) => {
+      const orderId = item.Order.id;
+      if (!ordersMap[orderId]) {
+        ordersMap[orderId] = {
+          id: item.Order.id,
+          date: item.Order.createdAt,
+          status: item.Order.status,
+          customer: item.Order.User?.username || "Guest",
+          itemsCount: 0,
+          total: 0
+        };
+      }
+      const itemTotal = item.quantity * item.price;
+      ordersMap[orderId].total += itemTotal;
+      ordersMap[orderId].itemsCount += item.quantity;
+      totalRevenue += itemTotal;
+    });
+
+    const allOrders = Object.values(ordersMap).sort((a, b) => new Date(b.date) - new Date(a.date));
+    const totalOrders = allOrders.length;
+    const recentOrders = allOrders.slice(0, 5); // Take top 5 recent
+
+    // 2. Count Total Products
+    const totalProducts = await Product.count({
+      where: { sellerId }
+    });
+
+    res.json({
+      totalRevenue,
+      totalOrders,
+      totalProducts,
+      recentOrders
+    });
+
+  } catch (err) {
+    console.error("GET SELLER STATS ERROR:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get("/profile", requireAuth, requireSeller, async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
@@ -87,7 +151,7 @@ router.get("/orders", requireAuth, requireSeller, async (req, res) => {
 router.put("/profile", requireAuth, requireSeller, async (req, res) => {
   try {
     const { storeName, storeAddress, storePhone } = req.body;
-    
+
     const user = await User.findByPk(req.user.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -115,10 +179,10 @@ router.get("/products", requireAuth, requireSeller, async (req, res) => {
     where: { sellerId: req.user.id },
     include: [
       { model: Category, attributes: ["id", "name"] },
-      { 
-        model: User, 
-        as: "seller", 
-        attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"] 
+      {
+        model: User,
+        as: "seller",
+        attributes: ["id", "username", "email", "storeName", "storeAddress", "storePhone"]
       }
     ],
     order: [["createdAt", "DESC"]],
