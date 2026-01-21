@@ -10,7 +10,7 @@ export default function SellerScreen() {
   useEffect(() => {
     // حماية: غير seller يقدر يدخل
     if (!user) router.replace("/"); // يرجع للـ welcome
-    else if (user.role !== "seller") router.replace("/(tabs)"); // يرجع للهوم
+    else if (user.role !== "seller") router.replace("/(tabs)/home"); // يرجع للهوم
   }, [user]);
 
   return (
