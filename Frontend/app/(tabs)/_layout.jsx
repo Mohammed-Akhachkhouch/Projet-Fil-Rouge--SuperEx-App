@@ -2,10 +2,12 @@ import { Tabs } from "expo-router";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore.js";
+import { router } from "expo-router";
 
 export default function TabsLayout() {
   const user = useAuthStore((s) => s.user);
   const isSeller = user?.role === "seller";
+  
 
   return (
     <Tabs
