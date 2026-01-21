@@ -7,6 +7,7 @@ import {
   StatusBar,
   Dimensions,
   TextInput,
+  Alert,
 } from "react-native";
 import { useRouter, Redirect } from "expo-router";
 import LottieView from "lottie-react-native";
@@ -86,7 +87,9 @@ export default function WelcomeScreen() {
         goNextByRole(data?.user?.role || role);
       }
     } catch (e) {
-      console.log("AUTH ERROR:", e?.response?.data?.message || e.message);
+      const msg = e?.response?.data?.message || e.message;
+      console.log("AUTH ERROR:", msg);
+      Alert.alert("Authentication Failed", msg);
     }
   };
 
