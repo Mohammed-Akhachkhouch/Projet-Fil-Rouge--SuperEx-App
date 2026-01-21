@@ -85,7 +85,16 @@ export default function Checkout() {
       const data = await createOrderMut.mutateAsync(payload);
 
       clearCart();
-      router.replace(`/confirmation?orderId=${data.orderId}`);
+      clearCart();
+      router.replace({
+        pathname: "/confirmation",
+        params: {
+          orderId: data.orderId,
+          address: address ? address.full : "Unknown Location",
+          lat: location ? location.latitude : null,
+          lng: location ? location.longitude : null
+        }
+      });
     } catch (e) {
       console.log("ORDER ERROR:", e?.response?.data?.message || e.message);
       Alert.alert("Order Failed", "Something went wrong. Please try again.");
