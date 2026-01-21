@@ -34,11 +34,19 @@ http.interceptors.request.use(async (config) => {
 http.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    // Don't trigger logout for login/signup failures (invalid credentials)
+    const isAuthRequest = error.config?.url?.includes("/auth/login") || error.config?.url?.includes("/auth/signup");
+
+    if (error.response?.status === 401 && !isAuthRequest) {
       try {
         const useAuthStore = await getAuthStore();
-        // Clear auth state - Zustand persist will also clear storage
-        useAuthStore.getState().logout();
+        const state = useAuthStore.getState();
+        
+        // Only logout if we actually have a session to clear
+        if (state.token) {
+           // Clear auth state - Zustand persist will also clear storage
+           state.logout();
+        }
       } catch (e) {
         // Ignore errors during logout
       }
