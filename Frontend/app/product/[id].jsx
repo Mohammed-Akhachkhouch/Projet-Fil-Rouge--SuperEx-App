@@ -72,9 +72,6 @@ export default function ProductDetails() {
             <Ionicons name="chevron-back" size={24} color="#111" />
           </TouchableOpacity>
           <View style={styles.rightIcons}>
-            <TouchableOpacity style={styles.iconBtn}>
-              <Ionicons name="heart-outline" size={24} color="#111" />
-            </TouchableOpacity>
             <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/(tabs)/cart')}>
               <Ionicons name="cart-outline" size={24} color="#111" />
               {cartItems.length > 0 && (
@@ -96,11 +93,6 @@ export default function ProductDetails() {
             }
             style={styles.image}
           />
-          <View style={styles.dotsContainer}>
-            <View style={[styles.dot, styles.activeDot]} />
-            <View style={styles.dot} />
-            <View style={styles.dot} />
-          </View>
         </View>
 
         <View style={styles.sheet}>
@@ -214,14 +206,19 @@ const styles = StyleSheet.create({
   badgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
 
   imageContainer: {
-    height: 380, width: width, backgroundColor: '#FDFBF7', // Light beige bg like reference
-    justifyContent: 'center', alignItems: 'center',
-    paddingTop: 60
+    height: 380,
+    width: width,
+    backgroundColor: '#FDFBF7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 60,
+    overflow: 'hidden'
   },
-  image: { width: 280, height: 280, resizeMode: 'contain' },
-  dotsContainer: { flexDirection: 'row', position: 'absolute', bottom: 30 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#D1D5DB', marginHorizontal: 4 },
-  activeDot: { backgroundColor: '#34A853' },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
+  },
 
   sheet: {
     backgroundColor: '#fff',
