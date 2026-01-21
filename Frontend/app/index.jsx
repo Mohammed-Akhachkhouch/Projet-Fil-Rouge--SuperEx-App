@@ -136,10 +136,9 @@ export default function WelcomeScreen() {
 
           <View style={styles.sheetHeadline}>
             <Text style={styles.sheetMainTitle}>
-              Welcome to SuperMarket Express
+              Welcome to SuperEx
             </Text>
             <Text style={styles.sheetSubtitle}>
-              Get fresh produce delivered to your door.
             </Text>
           </View>
 
@@ -389,7 +388,7 @@ const styles = StyleSheet.create({
   bottomSheetContent: { flex: 1, paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 },
 
   sheetIconContainer: { width: 48, height: 48, borderRadius: 24, backgroundColor: "#13ec5b", justifyContent: "center", alignItems: "center", alignSelf: "center", marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 },
-  sheetHeadline: { alignItems: "center", marginBottom: 24 },
+  sheetHeadline: { alignItems: "center", marginBottom: 0 },
   sheetMainTitle: { fontSize: 28, fontWeight: "bold", color: "#1a1a1a", textAlign: "center", marginBottom: 8, lineHeight: 34 },
   sheetSubtitle: { fontSize: 16, color: "#64748b", textAlign: "center", fontWeight: "500" },
 
