@@ -11,28 +11,25 @@ export default function ProductCard({ item, onAdd }) {
     item?.image && typeof item.image === "string" && item.image.startsWith("http")
       ? { uri: item.image }
       : item?.imageUrl && typeof item.imageUrl === "string" && item.imageUrl.startsWith("http")
-      ? { uri: item.imageUrl }
-      : placeholder;
+        ? { uri: item.imageUrl }
+        : placeholder;
 
   const goDetails = () => router.push(`/product/${item.id}`);
-  
+
   const sellerName = item?.seller?.storeName || item?.seller?.username || "Unknown Store";
 
   return (
     <Pressable style={styles.card} onPress={goDetails}>
       <View style={styles.imageWrap}>
         <Image source={imageSource} style={styles.image} />
-        <TouchableOpacity style={styles.favBtn} onPress={goDetails}>
-          <Ionicons name="heart-outline" size={18} color="#7B8794" />
-        </TouchableOpacity>
       </View>
 
       <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
-      
+
       <Text style={styles.storeName} numberOfLines={1}>
         <Ionicons name="storefront" size={12} color="#34A853" /> {sellerName}
       </Text>
-      
+
       <Text style={styles.qty} numberOfLines={1}>{item.qtyLabel || ""}</Text>
 
       <View style={styles.bottomRow}>
