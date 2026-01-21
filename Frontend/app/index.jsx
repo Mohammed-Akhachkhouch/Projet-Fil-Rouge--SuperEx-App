@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,12 @@ import {
   Dimensions,
   TextInput,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Redirect } from "expo-router";
 import LottieView from "lottie-react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Ionicons } from "@expo/vector-icons";
 import { useLoginMutation, useSignupMutation } from "../hooks/useAuthMutations.js";
+import { useAuthStore } from "../store/authStore";
 
 const { width } = Dimensions.get("window");
 
@@ -20,7 +21,6 @@ export default function WelcomeScreen() {
   const router = useRouter();
   const bottomSheetRef = useRef(null);
   const snapPoints = useMemo(() => ["85%", "95%"], []);
-
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,8 +29,19 @@ export default function WelcomeScreen() {
 
   const [role, setRole] = useState("customer");
 
+  // Get auth state from Zustand
+  const token = useAuthStore((s) => s.token);
+  const user = useAuthStore((s) => s.user);
+
   const loginMut = useLoginMutation();
   const signupMut = useSignupMutation();
+
+  // If user is already authenticated, redirect to appropriate screen
+  if (token && user) {
+    const redirectPath = user.role === "seller" ? "/(seller)/dashboard" : "/(tabs)";
+    console.log("User authenticated, redirecting to:", redirectPath);
+    return <Redirect href={redirectPath} />;
+  }
 
   const handleGetStarted = () => {
     bottomSheetRef.current?.expand();
@@ -78,6 +89,7 @@ export default function WelcomeScreen() {
       console.log("AUTH ERROR:", e?.response?.data?.message || e.message);
     }
   };
+
 
   return (
     <View style={styles.container}>
