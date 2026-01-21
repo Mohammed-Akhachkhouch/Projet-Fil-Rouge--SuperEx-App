@@ -24,7 +24,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (
@@ -52,7 +52,7 @@ export default function TabsLayout() {
               <TouchableOpacity
                 style={styles.cartButton}
                 activeOpacity={0.85}
-                onPress={() => router.push("/(tabs)/cart")} 
+                onPress={() => router.push("/(tabs)/cart")}
               >
                 <Ionicons name="cart" size={26} color="#fff" />
               </TouchableOpacity>
@@ -85,7 +85,7 @@ export default function TabsLayout() {
         name="seller"
         options={{
           title: "Seller",
-          href: isSeller ? "/(tabs)/seller" : null, 
+          href: isSeller ? "/(tabs)/seller" : null,
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="storefront-outline" size={size} color={color} />
           ),

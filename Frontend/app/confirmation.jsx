@@ -14,7 +14,7 @@ export default function Confirmation() {
         <Text style={styles.primaryText}>Track Order</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.secondary} onPress={() => router.replace("/(tabs)")}>
+      <TouchableOpacity style={styles.secondary} onPress={() => router.replace("/(tabs)/home")}>
         <Text style={styles.secondaryText}>Back Home</Text>
       </TouchableOpacity>
     </View>

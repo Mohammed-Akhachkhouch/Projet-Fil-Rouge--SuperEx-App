@@ -38,7 +38,7 @@ export default function WelcomeScreen() {
 
   // If user is already authenticated, redirect to appropriate screen
   if (token && user) {
-    const redirectPath = user.role === "seller" ? "/(seller)/dashboard" : "/(tabs)";
+    const redirectPath = user.role === "seller" ? "/(seller)/dashboard" : "/(tabs)/home";
     console.log("User authenticated, redirecting to:", redirectPath);
     return <Redirect href={redirectPath} />;
   }
@@ -59,7 +59,7 @@ export default function WelcomeScreen() {
     if (r === "seller") {
       router.replace("/(seller)/dashboard");
     } else {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/home");
     }
   };
 

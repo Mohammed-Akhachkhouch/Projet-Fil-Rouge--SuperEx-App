@@ -14,7 +14,6 @@ export default function RootLayout() {
   const token = useAuthStore((s) => s.token);
   const user = useAuthStore((s) => s.user);
 
-  console.log("Auth state:", { hasHydrated, token: !!token, user: user?.role });
 
   // Show loading while Zustand rehydrates from AsyncStorage
   if (!hasHydrated) {
@@ -35,8 +34,8 @@ export default function RootLayout() {
             <BottomSheetModalProvider>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="(seller)" />
+                {token && user?.role === 'customer' && <Stack.Screen name="(tabs)" />}
+                {token && user?.role === 'seller' && <Stack.Screen name="(seller)" />}
               </Stack>
             </BottomSheetModalProvider>
           </SafeAreaView>

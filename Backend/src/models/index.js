@@ -57,4 +57,11 @@ Product.belongsToMany(Order, {
   onUpdate: "CASCADE",
 });
 
+// Explicit associations for OrderItem to allow querying OrderItem directly with include
+OrderItem.belongsTo(Order, { foreignKey: "orderId" });
+Order.hasMany(OrderItem, { foreignKey: "orderId" });
+
+OrderItem.belongsTo(Product, { foreignKey: "productId" });
+Product.hasMany(OrderItem, { foreignKey: "productId" });
+
 export { sequelize, User, Product, Category, Order, OrderItem };
