@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { login, signup } from "../services/authService";
 import { useAuthStore } from "../store/authStore";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function useLoginMutation() {
   const setAuth = useAuthStore((s) => s.setAuth);
@@ -9,13 +8,9 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      console.log("LOGIN SUCCESS:", data.user?.email);
+      // Zustand persist middleware automatically saves to AsyncStorage
       setAuth(data.user, data.token);
-      try {
-        AsyncStorage.setItem("userToken", data.token);
-        AsyncStorage.setItem("userData", JSON.stringify(data.user));
-      } catch (e) {
-        console.log("Failed to persist auth:", e);
-      }
     },
   });
 }
@@ -26,13 +21,10 @@ export function useSignupMutation() {
   return useMutation({
     mutationFn: signup,
     onSuccess: (data) => {
+      console.log("SIGNUP SUCCESS:", data.user?.email);
+      // Zustand persist middleware automatically saves to AsyncStorage
       setAuth(data.user, data.token);
-      try {
-        AsyncStorage.setItem("userToken", data.token);
-        AsyncStorage.setItem("userData", JSON.stringify(data.user));
-      } catch (e) {
-        console.log("Failed to persist auth:", e);
-      }
     },
   });
 }
+

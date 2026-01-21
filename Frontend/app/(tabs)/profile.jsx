@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "../../store/authStore";
 import { useRouter } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function Profile() {
   const router = useRouter();
@@ -10,18 +10,15 @@ export default function Profile() {
   const logout = useAuthStore((s) => s.logout);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  useEffect(() => {
-    if (!user && !isLoggingOut) {
-      setTimeout(() => {
-        router.push("/");
-      }, 100);
-    }
-  }, [user, isLoggingOut]);
-
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       await logout();
+      // Safety fallback: if app reload fails/delays, navigate to index
+      if (router.canGoBack()) {
+        router.dismissAll();
+      }
+      router.replace("/");
     } catch (error) {
       console.log("Logout error:", error);
       setIsLoggingOut(false);
