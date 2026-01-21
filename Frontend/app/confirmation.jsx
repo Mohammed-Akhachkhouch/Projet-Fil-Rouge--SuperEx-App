@@ -9,7 +9,6 @@ export default function Confirmation() {
   const router = useRouter();
   const { orderId, address, lat, lng } = useLocalSearchParams();
 
-  // Mock calculation for delivery time (e.g., 45 mins from now)
   const getDeliveryTime = () => {
     const d = new Date();
     d.setMinutes(d.getMinutes() + 45);
@@ -22,7 +21,6 @@ export default function Confirmation() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={{ width: 24 }} />
         <Text style={styles.headerTitle}>Confirmation</Text>
@@ -33,7 +31,6 @@ export default function Confirmation() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-        {/* Success Animation/Icon */}
         <View style={styles.iconContainer}>
           <View style={styles.successRing}>
             <View style={styles.successCircle}>
@@ -45,7 +42,6 @@ export default function Confirmation() {
         <Text style={styles.title}>Order Placed Successfully!</Text>
         <Text style={styles.subtitle}>Your groceries are being packed with care.</Text>
 
-        {/* Delivery Card */}
         <View style={styles.card}>
           <View style={styles.cardHeaderRow}>
             <View style={styles.deliveryBadge}>
@@ -60,7 +56,6 @@ export default function Confirmation() {
             <View style={styles.progressFill} />
           </View>
 
-          {/* Address Row with Real Map */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <View style={{ flex: 1, paddingRight: 10 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
@@ -74,7 +69,6 @@ export default function Confirmation() {
               </TouchableOpacity>
             </View>
 
-            {/* Mini Map */}
             <View style={styles.mapContainer}>
               {hasLocation ? (
                 <MapView
@@ -101,7 +95,6 @@ export default function Confirmation() {
           </View>
         </View>
 
-        {/* Order Info Card */}
         <View style={[styles.card, { marginTop: 16 }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
             <Text style={styles.sectionLabel}>ORDER NUMBER</Text>
@@ -118,7 +111,6 @@ export default function Confirmation() {
 
         <View style={{ height: 40 }} />
 
-        {/* Action Buttons */}
         <TouchableOpacity style={styles.trackBtn} onPress={() => router.push(`/order/${orderId}`)}>
           <Text style={styles.trackBtnText}>Track Order</Text>
           <Ionicons name="arrow-forward" size={20} color="#fff" />
@@ -142,11 +134,10 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 16, fontWeight: "600", color: "#111" },
   content: { padding: 20, paddingBottom: 40, alignItems: 'center' },
 
-  // Success Icon
   iconContainer: { marginBottom: 24, marginTop: 10 },
   successRing: {
     width: 100, height: 100, borderRadius: 50,
-    backgroundColor: "#DCFCE7", // Light green bg
+    backgroundColor: "#DCFCE7",
     justifyContent: "center", alignItems: "center",
     shadowColor: "#34A853", shadowOpacity: 0.2, shadowRadius: 20, elevation: 10
   },
@@ -157,11 +148,9 @@ const styles = StyleSheet.create({
     shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 5, elevation: 5
   },
 
-  // Titles
   title: { fontSize: 24, fontWeight: "800", color: "#111", textAlign: "center", marginBottom: 8 },
   subtitle: { fontSize: 14, color: "#666", textAlign: "center", marginBottom: 32, paddingHorizontal: 40, lineHeight: 20 },
 
-  // Card
   card: {
     width: '100%',
     backgroundColor: "#fff",
@@ -192,12 +181,10 @@ const styles = StyleSheet.create({
   },
   map: { width: '100%', height: '100%' },
 
-  // Info Card
   sectionLabel: { fontSize: 11, color: "#888", fontWeight: "700", letterSpacing: 0.5 },
   orderId: { fontSize: 14, fontWeight: "700", color: "#34A853", backgroundColor: "#DCFCE7", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   divider: { height: 1, backgroundColor: "#F3F4F6", marginVertical: 8 },
 
-  // Buttons
   trackBtn: {
     width: '100%', height: 56, borderRadius: 16,
     backgroundColor: "#34A853",

@@ -13,17 +13,8 @@ export default function Checkout() {
   const router = useRouter();
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clearCart);
-  const totalPrice = useCartStore((s) => s.totalPrice()); // Correctly calling it if it's a selector returning function, but earlier fix treated it as value. 
-  // checking store: totalPrice: () => get().items.reduce(...) 
-  // So useCartStore(s => s.totalPrice()) EXECUTES the function and returns value.
-  // Wait, my previous fix was treating it as value.
-  // Let's verify store definition from Step 9:
-  // totalPrice: () => get().items...
-  // If selector is (s) => s.totalPrice, it returns the function.
-  // If selector is (s) => s.totalPrice(), it returns the number.
-  // My previous code was `const totalPrice = useCartStore((s) => s.totalPrice());`
-  // This executes the function inside the selector, so `const totalPrice` IS A NUMBER.
-  // So I should treat it as a number.
+  const totalPrice = useCartStore((s) => s.totalPrice());
+
 
   const createOrderMut = useCreateOrderMutation();
 
@@ -52,7 +43,6 @@ export default function Checkout() {
 
         if (addressResponse.length > 0) {
           const addr = addressResponse[0];
-          // Construct a readable address
           const street = addr.street || addr.name || '';
           const city = addr.city || addr.subregion || '';
           const country = addr.country || '';
@@ -78,7 +68,6 @@ export default function Checkout() {
     try {
       const payload = {
         items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
-        // Optionally include address in payload if backend supports it
         shippingAddress: address ? address.full : "Unknown Location"
       };
 
@@ -107,7 +96,6 @@ export default function Checkout() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={handleBack} style={styles.iconBtn}>
           <Ionicons name="chevron-back" size={24} color="#111" />
@@ -120,7 +108,6 @@ export default function Checkout() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Delivery Address */}
         <Text style={styles.sectionHeader}>Delivery Address</Text>
         <View style={styles.card}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -140,7 +127,6 @@ export default function Checkout() {
               </TouchableOpacity>
             </View>
 
-            {/* Real Map View */}
             <View style={styles.mapContainer}>
               {location ? (
                 <MapView
@@ -169,7 +155,6 @@ export default function Checkout() {
           </View>
         </View>
 
-        {/* Expected Delivery */}
         <Text style={styles.sectionHeader}>Delivery Time</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
           <TouchableOpacity style={[styles.timeOption, styles.timeOptionActive]}>
@@ -190,7 +175,6 @@ export default function Checkout() {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* Order Summary */}
         <View style={styles.itemsHeaderRow}>
           <Text style={styles.sectionHeader}>Order Summary</Text>
           <TouchableOpacity onPress={() => router.back()}>
@@ -215,7 +199,6 @@ export default function Checkout() {
           {items.length === 0 && <Text style={{ textAlign: 'center', color: '#999', padding: 20 }}>Your cart is empty</Text>}
         </View>
 
-        {/* Payment Method */}
         <Text style={styles.sectionHeader}>Payment Method</Text>
         <View style={styles.card}>
           <View style={styles.addressRow}>
@@ -230,7 +213,6 @@ export default function Checkout() {
           </View>
         </View>
 
-        {/* Cost Breakdown */}
         <View style={[styles.card, { marginTop: 24, paddingVertical: 20 }]}>
           <View style={styles.costRow}>
             <Text style={styles.costLabel}>Subtotal</Text>
@@ -254,7 +236,6 @@ export default function Checkout() {
         <View style={{ height: 100 }} />
       </ScrollView>
 
-      {/* Button */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={[styles.payBtn, (items.length === 0 || createOrderMut.isPending) && { opacity: 0.7 }]}
