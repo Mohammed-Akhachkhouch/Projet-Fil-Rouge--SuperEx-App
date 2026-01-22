@@ -14,7 +14,6 @@ export default function SellerProfile() {
     setIsLoggingOut(true);
     try {
       await logout();
-      // Navigate to index screen after logout
       router.replace("/");
     } catch (error) {
       console.log("Logout error:", error);
@@ -25,7 +24,7 @@ export default function SellerProfile() {
   if (!user) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#34A853" />
+        <ActivityIndicator size="large" color="#37ad57ff" />
       </View>
     );
   }
