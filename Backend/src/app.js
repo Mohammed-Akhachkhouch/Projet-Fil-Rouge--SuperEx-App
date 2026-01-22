@@ -14,7 +14,12 @@ import sellerRoutes from "./routes/sellerRoutes.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors(
+  {
+    origin: "http://superex.up.railway.app/",
+    credentials: true,
+  }
+));
 app.use(express.json());
 
 
@@ -26,7 +31,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/seller", sellerRoutes);
 
-const force = false; 
+const force = false;
 
 sequelize
   .sync({ force })
