@@ -115,6 +115,8 @@ router.get("/orders", requireAuth, requireSeller, async (req, res) => {
     });
 
     // تجميع النتائج حسب Order ID
+
+    // ... (inside GET /orders)
     const ordersMap = {};
     sellerOrders.forEach((item) => {
       const orderId = item.Order.id;
@@ -124,8 +126,8 @@ router.get("/orders", requireAuth, requireSeller, async (req, res) => {
           status: item.Order.status,
           createdAt: item.Order.createdAt,
           customerId: item.Order.userId,
-          customerName: item.Order.User.username,
-          customerEmail: item.Order.User.email,
+          customerName: item.Order.User?.username || "Unknown",
+          customerEmail: item.Order.User?.email || "N/A",
           items: [],
           total: 0,
         };
@@ -139,7 +141,7 @@ router.get("/orders", requireAuth, requireSeller, async (req, res) => {
       ordersMap[orderId].total += item.quantity * item.price;
     });
 
-    const orders = Object.values(ordersMap);
+    const orders = Object.values(ordersMap).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return res.json({ orders });
   } catch (err) {
     console.error("GET SELLER ORDERS ERROR:", err);
@@ -154,20 +156,22 @@ router.get("/orders/:id", requireAuth, requireSeller, async (req, res) => {
 
     // Fetch order items for this specific order AND this seller
     const orderItems = await OrderItem.findAll({
+      where: { orderId },
       include: [
         {
           model: Product,
           where: { sellerId },
+          required: true,
           attributes: ["id", "name", "price", "image"],
         },
         {
           model: Order,
-          where: { id: orderId },
+          required: true,
           attributes: ["id", "status", "createdAt", "userId"],
           include: [
             {
               model: User,
-              attributes: ["id", "username", "email"],
+              attributes: ["id", "username", "email", "storePhone", "storeAddress"],
             },
           ],
         },
@@ -178,27 +182,30 @@ router.get("/orders/:id", requireAuth, requireSeller, async (req, res) => {
       return res.status(404).json({ message: "Order not found or no items for this seller" });
     }
 
-    // Since all items belong to the same order, we can take the order info from the first item
     const firstItem = orderItems[0];
+    const orderUser = firstItem.Order.User || {};
+
     const orderDetails = {
       id: firstItem.Order.id,
       status: firstItem.Order.status,
       createdAt: firstItem.Order.createdAt,
       customer: {
-        id: firstItem.Order.User.id,
-        username: firstItem.Order.User.username,
-        email: firstItem.Order.User.email,
+        id: firstItem.Order.userId,
+        username: orderUser.username || "Unknown",
+        email: orderUser.email || "N/A",
+        phone: orderUser.storePhone || "",
+        address: orderUser.storeAddress || "",
       },
-      items: orderItems.map(item => ({
+      items: orderItems.map((item) => ({
         id: item.id,
         productId: item.Product.id,
         productName: item.Product.name,
         productImage: item.Product.image,
         quantity: item.quantity,
         price: item.price,
-        total: item.quantity * item.price
+        total: item.quantity * item.price,
       })),
-      totalRevenue: orderItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+      totalRevenue: orderItems.reduce((sum, item) => sum + item.quantity * item.price, 0),
     };
 
     return res.json(orderDetails);

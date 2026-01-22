@@ -38,9 +38,11 @@ export default function SellerTabsLayout() {
         }}
       />
 
+
       <Tabs.Screen
         name="orders"
         options={{
+          headerShown: false,
           title: "Orders",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="receipt-outline" size={size} color={color} />
@@ -48,7 +50,6 @@ export default function SellerTabsLayout() {
         }}
       />
 
-  
       <Tabs.Screen
         name="profile"
         options={{
