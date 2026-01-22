@@ -15,7 +15,7 @@ export default function SellerOrderDetails() {
         return (
             <View style={[styles.screen, styles.center]}>
                 <ActivityIndicator size="large" color="#34A853" />
-                <Text style={styles.loadingText}>Loading Order Details...</Text>
+                <Text style={styles.loadingText}>Loading Order Details....</Text>
             </View>
         );
     }
