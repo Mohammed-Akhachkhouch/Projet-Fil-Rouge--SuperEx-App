@@ -28,13 +28,10 @@ export const useAuthStore = create(
           // Clear auth state
           set({ user: null, token: null });
 
-          // Reload the app to get a fresh state
-          try {
-            await Updates.reloadAsync();
-          } catch (e) {
-            // reloadAsync may fail in development, that's okay
-            console.log("App reload not available:", e.message);
-          }
+          // Force remove from storage to ensure persistence is cleared
+          await AsyncStorage.removeItem("auth-storage");
+
+
         }
       },
 

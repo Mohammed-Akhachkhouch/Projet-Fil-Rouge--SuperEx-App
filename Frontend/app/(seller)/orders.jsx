@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, 
 import { useSellerOrders } from "../../hooks/useSellerQueries";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { router } from "expo-router";
 
 export default function SellerOrders() {
   const [refreshing, setRefreshing] = useState(false);
@@ -81,7 +82,11 @@ export default function SellerOrders() {
               <Text style={styles.date}>{new Date(item.createdAt).toLocaleDateString()}</Text>
             </View>
 
-            <TouchableOpacity style={styles.btn} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={styles.btn}
+              activeOpacity={0.9}
+              onPress={() => router.push({ pathname: "/(seller)/order-details", params: { id: item.id } })}
+            >
               <Text style={styles.btnText}>Details</Text>
             </TouchableOpacity>
           </View>

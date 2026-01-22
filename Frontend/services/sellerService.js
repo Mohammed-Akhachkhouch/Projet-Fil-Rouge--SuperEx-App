@@ -24,3 +24,8 @@ export const getSellerOrders = async () => {
   const res = await http.get("/seller/orders");
   return res.data;
 };
+
+export const getSellerStats = async () => {
+  const res = await http.get("/seller/stats");
+  return res.data;
+};

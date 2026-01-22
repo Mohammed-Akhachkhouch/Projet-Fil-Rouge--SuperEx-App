@@ -1,6 +1,5 @@
 import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
+import "dotenv/config";
 import { sequelize } from "./config/database.js";
 import "./models/index.js";
 
@@ -11,10 +10,8 @@ import orderRoutes from "./routes/orderRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import sellerRoutes from "./routes/sellerRoutes.js";
 
-dotenv.config();
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
 
@@ -26,7 +23,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/seller", sellerRoutes);
 
-const force = false; 
+const force = false;
 
 sequelize
   .sync({ force })

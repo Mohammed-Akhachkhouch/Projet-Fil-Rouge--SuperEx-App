@@ -48,7 +48,7 @@ export default function SellerTabsLayout() {
         }}
       />
 
-  
+
       <Tabs.Screen
         name="profile"
         options={{
@@ -56,6 +56,20 @@ export default function SellerTabsLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="storefront-outline" size={size} color={color} />
           ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="home"
+        options={{
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="order-details"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
