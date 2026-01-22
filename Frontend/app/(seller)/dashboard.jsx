@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { http } from "../../services/http";
@@ -91,7 +91,12 @@ export default function SellerDashboard() {
 
         {stats?.recentOrders?.length > 0 ? (
           stats.recentOrders.map((order) => (
-            <View key={order.id} style={styles.item}>
+            <TouchableOpacity
+              key={order.id}
+              style={styles.item}
+              activeOpacity={0.7}
+              onPress={() => router.push(`/(seller)/orders/${order.id}`)}
+            >
               <View>
                 <Text style={styles.itemTitle}>Order #{order.id}</Text>
                 <Text style={styles.itemSub}>{order.itemsCount} items • {new Date(order.date).toLocaleDateString()}</Text>
@@ -105,7 +110,7 @@ export default function SellerDashboard() {
                   {order.status}
                 </Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))
         ) : (
           <Text style={styles.emptyText}>No orders yet.</Text>
