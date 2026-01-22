@@ -1,0 +1,72 @@
+classDiagram
+    class User {
+        +Integer id
+        +String username
+        +String email
+        +String password
+        +Enum role
+        +String storeName
+        +String storeAddress
+        +String storePhone
+        +Date createdAt
+        +Date updatedAt
+        +signup(name, email, password)
+        +login(email, password)
+        +me()
+        +getMyProfile()
+        +getUsers()
+    }
+
+    class Category {
+        +Integer id
+        +String name
+        +String image
+        +Date createdAt
+        +Date updatedAt
+        +getCategories()
+    }
+
+    class Product {
+        +Integer id
+        +String name
+        +Float price
+        +Integer stock
+        +Integer categoryId
+        +String image
+        +Text description
+        +String qtyLabel
+        +Boolean isActive
+        +Integer sellerId
+        +Date createdAt
+        +Date updatedAt
+        +getProducts(category)
+        +getProductById(id)
+        +createProduct(name, price, stock, categoryId, qtyLabel, description, image)
+    }
+
+    class Order {
+        +Integer id
+        +Integer userId
+        +String status
+        +Date createdAt
+        +Date updatedAt
+        +createOrder(items)
+        +getOrders()
+        +getOrderById(id)
+    }
+
+    class OrderItem {
+        +Integer orderId
+        +Integer productId
+        +Integer quantity
+        +Float price
+        +Date createdAt
+        +Date updatedAt
+    }
+
+    %% Relationships
+    User "1" -- "0..*" Order : places
+    User "1" -- "0..*" Product : sells
+    Category "1" o-- "0..*" Product : aggregates
+    Order "1" *-- "1..*" OrderItem : composed of
+    Product "1" -- "0..*" OrderItem : associated with

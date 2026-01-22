@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from "react-native";
-import { useSellerOrders } from "../../hooks/useSellerQueries";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { useSellerOrders } from "../../../hooks/useSellerQueries";
 
 export default function SellerOrders() {
     const router = useRouter();
