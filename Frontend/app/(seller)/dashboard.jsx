@@ -1,27 +1,53 @@
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from "react-native";
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { http } from "../../services/http";
+import { useState, useCallback } from "react";
+import { useRouter } from "expo-router";
 
 export default function SellerDashboard() {
+  const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = async () => {
+  const { data: stats, isLoading, error, refetch } = useQuery({
+    queryKey: ["sellerStats"],
+    queryFn: async () => {
+      const res = await http.get("/seller/stats");
+      return res.data;
+    },
+  });
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } finally {
-      setRefreshing(false);
-    }
-  };
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  if (isLoading && !refreshing) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#34A853" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.errorText}>Failed to load dashboard data</Text>
+        <Text style={styles.errorSub}>{error.message}</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView 
-      style={styles.screen} 
+    <ScrollView
+      style={styles.screen}
       contentContainerStyle={styles.container}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
-          onRefresh={handleRefresh}
+          onRefresh={onRefresh}
           tintColor="#34A853"
         />
       }
@@ -31,28 +57,64 @@ export default function SellerDashboard() {
 
       <View style={styles.cardsRow}>
         <View style={styles.card}>
-          <Ionicons name="cash-outline" size={22} color="#34A853" />
-          <Text style={styles.cardLabel}>Revenue</Text>
-          <Text style={styles.cardValue}>$1,240.00</Text>
+          <View style={styles.iconBg}>
+            <Ionicons name="cash-outline" size={24} color="#34A853" />
+          </View>
+          <Text style={styles.cardLabel}>Total Revenue</Text>
+          <Text style={styles.cardValue}>${stats?.totalRevenue?.toFixed(2) || "0.00"}</Text>
         </View>
 
         <View style={styles.card}>
-          <Ionicons name="receipt-outline" size={22} color="#34A853" />
-          <Text style={styles.cardLabel}>Orders</Text>
-          <Text style={styles.cardValue}>56</Text>
+          <View style={[styles.iconBg, { backgroundColor: "#E0F2FE" }]}>
+            <Ionicons name="receipt-outline" size={24} color="#0284C7" />
+          </View>
+          <Text style={styles.cardLabel}>Total Orders</Text>
+          <Text style={[styles.cardValue, { color: "#0284C7" }]}>{stats?.totalOrders || 0}</Text>
+        </View>
+      </View>
+
+      <View style={styles.cardsRow}>
+        <View style={styles.card}>
+          <View style={[styles.iconBg, { backgroundColor: "#fae8ff" }]}>
+            <Ionicons name="cube-outline" size={24} color="#d946ef" />
+          </View>
+          <Text style={styles.cardLabel}>Products</Text>
+          <Text style={[styles.cardValue, { color: "#d946ef" }]}>{stats?.totalProducts || 0}</Text>
         </View>
       </View>
 
       <View style={styles.block}>
-        <Text style={styles.blockTitle}>Pending Orders</Text>
-        <View style={styles.item}>
-          <Text style={styles.itemTitle}>#ORD-8421</Text>
-          <Text style={styles.itemSub}>2 items • $24.50</Text>
+        <View style={styles.blockHeader}>
+          <Text style={styles.blockTitle}>Recent Orders</Text>
+          <Text onPress={() => router.push("/(seller)/orders")} style={styles.seeAll}>See All</Text>
         </View>
-        <View style={styles.item}>
-          <Text style={styles.itemTitle}>#ORD-8418</Text>
-          <Text style={styles.itemSub}>1 item • $10.90</Text>
-        </View>
+
+        {stats?.recentOrders?.length > 0 ? (
+          stats.recentOrders.map((order) => (
+            <TouchableOpacity
+              key={order.id}
+              style={styles.item}
+              activeOpacity={0.7}
+              onPress={() => router.push(`/(seller)/orders/${order.id}`)}
+            >
+              <View>
+                <Text style={styles.itemTitle}>Order #{order.id}</Text>
+                <Text style={styles.itemSub}>{order.itemsCount} items • {new Date(order.date).toLocaleDateString()}</Text>
+              </View>
+              <View style={styles.itemRight}>
+                <Text style={styles.itemPrice}>${order.total.toFixed(2)}</Text>
+                <Text style={[
+                  styles.statusBadge,
+                  { color: order.status === 'completed' ? '#34A853' : '#F59E0B' }
+                ]}>
+                  {order.status}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.emptyText}>No orders yet.</Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -61,30 +123,60 @@ export default function SellerDashboard() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#fff" },
   container: { padding: 20, paddingBottom: 30 },
-  h1: { fontSize: 22, fontWeight: "900", color: "#111" },
-  sub: { marginTop: 4, color: "#6B7280", fontWeight: "600" },
+  center: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" },
 
-  cardsRow: { flexDirection: "row", gap: 12, marginTop: 16 },
+  h1: { fontSize: 24, fontWeight: "900", color: "#111" },
+  sub: { marginTop: 4, color: "#6B7280", fontWeight: "600", marginBottom: 24 },
+
+  cardsRow: { flexDirection: "row", gap: 12, marginBottom: 12 },
   card: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#EEF2F6",
     borderRadius: 16,
-    padding: 14,
+    padding: 16,
     backgroundColor: "#fff",
+    alignItems: "flex-start",
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 10,
+    elevation: 2,
   },
-  cardLabel: { marginTop: 8, color: "#6B7280", fontWeight: "700" },
-  cardValue: { marginTop: 6, fontSize: 18, fontWeight: "900", color: "#111" },
+  iconBg: {
+    width: 44, height: 44, borderRadius: 12, backgroundColor: "#D1FAE5", justifyContent: "center", alignItems: "center", marginBottom: 12
+  },
+  cardLabel: { fontSize: 13, color: "#6B7280", fontWeight: "700" },
+  cardValue: { marginTop: 4, fontSize: 20, fontWeight: "900", color: "#166534" },
 
   block: {
-    marginTop: 18,
+    marginTop: 24,
     borderWidth: 1,
     borderColor: "#EEF2F6",
-    borderRadius: 16,
-    padding: 14,
+    borderRadius: 20,
+    padding: 20,
+    backgroundColor: "#fff",
   },
-  blockTitle: { fontSize: 16, fontWeight: "900", color: "#111", marginBottom: 10 },
-  item: { paddingVertical: 10, borderTopWidth: 1, borderTopColor: "#F3F4F6" },
-  itemTitle: { fontWeight: "900", color: "#111" },
-  itemSub: { marginTop: 3, color: "#6B7280", fontWeight: "600" },
+  blockHeader: {
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16
+  },
+  blockTitle: { fontSize: 18, fontWeight: "900", color: "#111" },
+  seeAll: { fontSize: 14, fontWeight: "700", color: "#34A853" },
+
+  item: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6"
+  },
+  itemTitle: { fontWeight: "800", color: "#111", fontSize: 15 },
+  itemSub: { marginTop: 4, color: "#9CA3AF", fontWeight: "600", fontSize: 13 },
+  itemRight: { alignItems: "flex-end" },
+  itemPrice: { fontWeight: "900", color: "#111", fontSize: 15 },
+  statusBadge: { fontSize: 12, fontWeight: "700", marginTop: 4, textTransform: "capitalize" },
+
+  emptyText: { textAlign: "center", color: "#9CA3AF", marginTop: 20, marginBottom: 10 },
+  errorText: { fontSize: 16, fontWeight: "bold", color: "#EF4444" },
+  errorSub: { color: "#6B7280", marginTop: 4 }
 });
