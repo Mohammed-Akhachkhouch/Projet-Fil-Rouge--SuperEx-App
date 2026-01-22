@@ -147,6 +147,67 @@ router.get("/orders", requireAuth, requireSeller, async (req, res) => {
   }
 });
 
+router.get("/orders/:id", requireAuth, requireSeller, async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+    const orderId = Number(req.params.id);
+
+    // Fetch order items for this specific order AND this seller
+    const orderItems = await OrderItem.findAll({
+      include: [
+        {
+          model: Product,
+          where: { sellerId },
+          attributes: ["id", "name", "price", "image"],
+        },
+        {
+          model: Order,
+          where: { id: orderId },
+          attributes: ["id", "status", "createdAt", "userId"],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "username", "email"],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!orderItems || orderItems.length === 0) {
+      return res.status(404).json({ message: "Order not found or no items for this seller" });
+    }
+
+    // Since all items belong to the same order, we can take the order info from the first item
+    const firstItem = orderItems[0];
+    const orderDetails = {
+      id: firstItem.Order.id,
+      status: firstItem.Order.status,
+      createdAt: firstItem.Order.createdAt,
+      customer: {
+        id: firstItem.Order.User.id,
+        username: firstItem.Order.User.username,
+        email: firstItem.Order.User.email,
+      },
+      items: orderItems.map(item => ({
+        id: item.id,
+        productId: item.Product.id,
+        productName: item.Product.name,
+        productImage: item.Product.image,
+        quantity: item.quantity,
+        price: item.price,
+        total: item.quantity * item.price
+      })),
+      totalRevenue: orderItems.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+    };
+
+    return res.json(orderDetails);
+  } catch (err) {
+    console.error("GET SELLER ORDER DETAILS ERROR:", err);
+    return res.status(500).json({ message: err.message });
+  }
+});
+
 
 router.put("/profile", requireAuth, requireSeller, async (req, res) => {
   try {
