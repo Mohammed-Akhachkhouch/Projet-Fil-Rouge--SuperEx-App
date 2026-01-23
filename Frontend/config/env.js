@@ -1,1 +1,1 @@
-export const API_URL = "https://superex.up.railway.app/api";
+export const API_URL = "https://diamondlike-untormentingly-ismael.ngrok-free.dev/api"
