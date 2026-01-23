@@ -9,7 +9,17 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "minimumOsVersion": "13.4",
+      "deploymentTarget": "13.4",
+      "bundleIdentifier": "com.mohammedakhach.supereX",
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location"
+        ],
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show delivery addresses.",
+        "NSLocationAlwaysUsageDescription": "This app needs access to your location to show delivery addresses."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -18,9 +28,18 @@
         "backgroundImage": "./assets/icon.png",
         "monochromeImage": "./assets/icon.png"
       },
-      "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "pan",
+      "edgeToEdgeEnabled": false,
       "predictiveBackGestureEnabled": false,
-      "package": "com.mohammedakhach.supereX"
+      "package": "com.mohammedakhach.supereX",
+      "minSdkVersion": 23,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "INTERNET"
+      ]
     },
     "web": {
       "output": "static",

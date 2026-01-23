@@ -4,7 +4,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../store/authStore';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform, StatusBar } from 'react-native';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +30,18 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <SafeAreaView style={{ flex: 1 }}>
+          <SafeAreaView
+            style={{
+              flex: 1,
+              paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0
+            }}
+            edges={['left', 'right']}
+          >
+            <StatusBar
+              barStyle="dark-content"
+              backgroundColor="transparent"
+              translucent={true}
+            />
             <BottomSheetModalProvider>
               <Stack screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="index" />

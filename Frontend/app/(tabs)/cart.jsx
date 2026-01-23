@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCartStore } from '../../store/cartStore.js';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { scaleFontSize, moderateScale, scaleWidth } from '../../utils/responsive';
 
 export default function Cart() {
   const [refreshing, setRefreshing] = useState(false);
@@ -126,42 +127,42 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#F7F9FC' },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 20, paddingVertical: 16, backgroundColor: '#fff',
+    paddingHorizontal: moderateScale(20), paddingVertical: moderateScale(16), backgroundColor: '#fff',
     borderBottomWidth: 1, borderBottomColor: '#F0F0F0'
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: '#111' },
-  itemCountBadge: { backgroundColor: '#F3F4F6', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20 },
-  itemCountText: { fontSize: 12, fontWeight: '700', color: '#111' },
+  headerTitle: { fontSize: scaleFontSize(22), fontWeight: '800', color: '#111' },
+  itemCountBadge: { backgroundColor: '#F3F4F6', paddingHorizontal: moderateScale(10), paddingVertical: moderateScale(6), borderRadius: moderateScale(20) },
+  itemCountText: { fontSize: scaleFontSize(12), fontWeight: '700', color: '#111' },
 
-  listContent: { padding: 16, paddingBottom: 140 },
+  listContent: { padding: moderateScale(16), paddingBottom: moderateScale(140) },
 
   row: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 12,
-    marginBottom: 16,
+    borderRadius: moderateScale(16),
+    padding: moderateScale(12),
+    marginBottom: moderateScale(16),
     shadowColor: "#000", shadowOpacity: 0.03, shadowRadius: 8, elevation: 2
   },
-  image: { width: 80, height: 80, borderRadius: 12, backgroundColor: '#F3F4F6' },
+  image: { width: scaleWidth(80), height: scaleWidth(80), borderRadius: moderateScale(12), backgroundColor: '#F3F4F6' },
 
   rowTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  name: { fontSize: 16, fontWeight: '700', color: '#111', flex: 1, paddingRight: 8 },
-  trashBtn: { padding: 4 },
+  name: { fontSize: scaleFontSize(16), fontWeight: '700', color: '#111', flex: 1, paddingRight: moderateScale(8) },
+  trashBtn: { padding: moderateScale(4) },
 
-  meta: { fontSize: 13, color: '#888', marginTop: 4 },
+  meta: { fontSize: scaleFontSize(13), color: '#888', marginTop: moderateScale(4) },
 
-  rowBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 },
-  price: { fontSize: 18, fontWeight: '800', color: '#111' },
+  rowBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: moderateScale(12) },
+  price: { fontSize: scaleFontSize(18), fontWeight: '800', color: '#111' },
 
-  controls: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: 12, padding: 4 },
+  controls: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F3F4F6', borderRadius: moderateScale(12), padding: moderateScale(4) },
   qtyBtn: {
-    width: 28, height: 28, borderRadius: 8,
+    width: scaleWidth(28), height: scaleWidth(28), borderRadius: moderateScale(8),
     backgroundColor: '#fff',
     justifyContent: 'center', alignItems: 'center',
     shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 2, elevation: 1
   },
-  qtyValue: { width: 30, textAlign: 'center', fontWeight: '700', fontSize: 14, color: '#111' },
+  qtyValue: { width: scaleWidth(30), textAlign: 'center', fontWeight: '700', fontSize: scaleFontSize(14), color: '#111' },
 
   footerContainer: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -169,30 +170,30 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: '#fff',
-    borderTopLeftRadius: 24, borderTopRightRadius: 24,
-    padding: 24,
-    paddingBottom: 32,
+    borderTopLeftRadius: moderateScale(24), borderTopRightRadius: moderateScale(24),
+    padding: moderateScale(24),
+    paddingBottom: moderateScale(32),
     shadowColor: "#000", shadowOpacity: 0.08, shadowRadius: 20, elevation: 10
   },
-  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  totalLabel: { fontSize: 16, fontWeight: '600', color: '#666' },
-  totalPrice: { fontSize: 24, fontWeight: '800', color: '#111' },
+  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: moderateScale(20) },
+  totalLabel: { fontSize: scaleFontSize(16), fontWeight: '600', color: '#666' },
+  totalPrice: { fontSize: scaleFontSize(24), fontWeight: '800', color: '#111' },
 
   checkoutBtn: {
-    height: 56,
-    borderRadius: 16,
+    height: moderateScale(56),
+    borderRadius: moderateScale(16),
     backgroundColor: '#34A853',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: "#34A853", shadowOpacity: 0.25, shadowRadius: 10, elevation: 5
   },
-  checkoutText: { color: '#fff', fontSize: 16, fontWeight: '700', marginRight: 8 },
+  checkoutText: { color: '#fff', fontSize: scaleFontSize(16), fontWeight: '700', marginRight: moderateScale(8) },
 
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 },
-  emptyIconBg: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#F3F4F6', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
-  emptyTitle: { fontSize: 20, fontWeight: '800', color: '#111' },
-  emptySub: { marginTop: 8, color: '#6B7280', textAlign: 'center', fontSize: 15, lineHeight: 22 },
-  startShopBtn: { marginTop: 32, backgroundColor: '#111', paddingHorizontal: 24, paddingVertical: 14, borderRadius: 14 },
-  startShopText: { color: '#fff', fontWeight: '700', fontSize: 16 }
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: moderateScale(32) },
+  emptyIconBg: { width: scaleWidth(80), height: scaleWidth(80), borderRadius: moderateScale(40), backgroundColor: '#F3F4F6', justifyContent: 'center', alignItems: 'center', marginBottom: moderateScale(24) },
+  emptyTitle: { fontSize: scaleFontSize(20), fontWeight: '800', color: '#111' },
+  emptySub: { marginTop: moderateScale(8), color: '#6B7280', textAlign: 'center', fontSize: scaleFontSize(15), lineHeight: scaleFontSize(22) },
+  startShopBtn: { marginTop: moderateScale(32), backgroundColor: '#111', paddingHorizontal: moderateScale(24), paddingVertical: moderateScale(14), borderRadius: moderateScale(14) },
+  startShopText: { color: '#fff', fontWeight: '700', fontSize: scaleFontSize(16) }
 });

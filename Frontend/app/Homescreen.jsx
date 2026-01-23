@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList, ActivityIndicator, RefreshControl, Platform } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
 import { useState, useRef, useMemo } from "react";
@@ -10,6 +10,7 @@ import ProductCard from "./component/ProductCard";
 
 import { useCategories } from "../hooks/useCategories";
 import { useProducts } from "../hooks/useProducts";
+import { scaleFontSize, moderateScale, getResponsivePadding } from "../utils/responsive";
 
 export default function Homescreen() {
   const [search, setSearch] = useState("");
@@ -56,8 +57,8 @@ export default function Homescreen() {
     <View style={styles.screen}>
       <StatusBar style="dark" />
 
-      <ScrollView 
-        contentContainerStyle={styles.container} 
+      <ScrollView
+        contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
@@ -184,36 +185,51 @@ export default function Homescreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#fff" },
-  container: { padding: 20 },
+  screen: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
+  container: {
+    padding: getResponsivePadding(),
+    paddingBottom: moderateScale(20)
+  },
   sectionHeader: {
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: moderateScale(10),
+    marginBottom: moderateScale(10),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  sectionTitle: { fontSize: 18, fontWeight: "700", color: "#111" },
-  seeAll: { color: "#34A853", fontWeight: "600" },
+  sectionTitle: {
+    fontSize: scaleFontSize(18),
+    fontWeight: "700",
+    color: "#111"
+  },
+  seeAll: {
+    color: "#34A853",
+    fontWeight: "600",
+    fontSize: scaleFontSize(14)
+  },
 
   sheetContent: {
     flex: 1,
-    padding: 16,
+    padding: moderateScale(16),
     backgroundColor: "#fff",
   },
   sheetHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: moderateScale(10),
   },
   sheetTitle: {
-    fontSize: 18,
+    fontSize: scaleFontSize(18),
     fontWeight: "800",
     color: "#111",
   },
   sheetClose: {
     color: "#34A853",
     fontWeight: "700",
+    fontSize: scaleFontSize(14)
   },
 });
